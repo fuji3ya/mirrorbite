@@ -1,0 +1,133 @@
+name: iOS Build (EAS local on macOS)
+
+# Build a production iOS .ipa on a GitHub-hosted macOS runner using
+# `eas build --local`. This bypasses EAS Cloud quota (Free 15 iOS/month)
+# and uses the public-repo unlimited macOS minutes instead.
+#
+# Triggers:
+#   - Manual via workflow_dispatch (with auto-submit toggle)
+#   - Push to main that touches app code (skips on docs-only)
+#
+# Required GitHub Secrets:
+#   EXPO_TOKEN                  — Expo access token (mirrorbite-eas)
+#   ASC_API_KEY_P8_B64          — App Store Connect API .p8 file, base64-encoded
+#   ASC_API_KEY_ID              — e.g. CQ7T58CX49
+#   ASC_API_KEY_ISSUER_ID       — e.g. cb16e608-...
+#   IOS_DIST_P12_B64            — Distribution .p12, base64-encoded
+#   IOS_DIST_P12_PASSWORD       — .p12 password
+#   IOS_PROVISIONING_PROFILE_B64 — .mobileprovision, base64-encoded
+#   EXPO_PUBLIC_MB_CLIENT_SECRET — Worker shared secret
+#   EXPO_PUBLIC_RC_API_KEY_IOS  — RevenueCat iOS public key (appl_xxx)
+#   EXPO_PUBLIC_VISION_API_URL  — Cloudflare Worker URL
+
+on:
+  workflow_dispatch:
+    inputs:
+      auto_submit:
+        description: 'Auto-submit to App Store Connect after build'
+        type: boolean
+        required: false
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'lib/**'
+      - 'components/**'
+      - 'assets/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'app.json'
+      - 'eas.json'
+      - '.github/workflows/ios-build.yml'
+
+jobs:
+  build-ios:
+    name: Build iOS production .ipa
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup EAS / Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore iOS credentials
+        env:
+          DIST_P12_B64: ${{ secrets.IOS_DIST_P12_B64 }}
+          DIST_P12_PASSWORD: ${{ secrets.IOS_DIST_P12_PASSWORD }}
+          PROFILE_B64: ${{ secrets.IOS_PROVISIONING_PROFILE_B64 }}
+          ASC_KEY_B64: ${{ secrets.ASC_API_KEY_P8_B64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_ISSUER: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+        run: |
+          mkdir -p .secrets
+          echo "$DIST_P12_B64" | base64 -d > .secrets/ios_distribution.p12
+          echo "$PROFILE_B64" | base64 -d > .secrets/Mirrorbite_AppStore.mobileprovision
+          echo "$ASC_KEY_B64" | base64 -d > .secrets/AuthKey_${ASC_KEY_ID}.p8
+          cat > credentials.json <<EOF
+          {
+            "ios": {
+              "provisioningProfilePath": ".secrets/Mirrorbite_AppStore.mobileprovision",
+              "distributionCertificate": {
+                "path": ".secrets/ios_distribution.p12",
+                "password": "${DIST_P12_PASSWORD}"
+              }
+            }
+          }
+          EOF
+
+      - name: Write production env vars
+        env:
+          MB_SECRET: ${{ secrets.EXPO_PUBLIC_MB_CLIENT_SECRET }}
+          RC_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_IOS }}
+          VISION_URL: ${{ secrets.EXPO_PUBLIC_VISION_API_URL }}
+        run: |
+          cat > .env.local <<EOF
+          EXPO_PUBLIC_MB_CLIENT_SECRET=${MB_SECRET}
+          EXPO_PUBLIC_RC_API_KEY_IOS=${RC_KEY}
+          EXPO_PUBLIC_VISION_API_URL=${VISION_URL}
+          EXPO_PUBLIC_REVIEW_MODE=0
+          EOF
+
+      - name: EAS build (local)
+        run: |
+          eas build \
+            --platform ios \
+            --profile production \
+            --local \
+            --non-interactive \
+            --output build.ipa
+
+      - name: Upload .ipa artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mirrorbite-ios-ipa
+          path: build.ipa
+          retention-days: 7
+
+      - name: Submit to App Store Connect
+        if: ${{ inputs.auto_submit == true }}
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_ISSUER: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+        run: |
+          eas submit \
+            --platform ios \
+            --path build.ipa \
+            --non-interactive \
+            --profile production

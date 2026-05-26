@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mirrorbite — Terms of Service</title>
+<style>
+:root { --teal: #3DB8A8; --ink: #1c1c1e; --muted: #6B6F76; --line: #ebebeb; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "SF Pro Text", Inter, sans-serif; color: var(--ink); max-width: 720px; margin: 0 auto; padding: 32px 24px 80px; line-height: 1.6; }
+h1 { font-size: 28px; letter-spacing: -0.5px; margin: 0 0 8px; }
+.updated { color: var(--muted); font-size: 14px; margin: 0 0 32px; }
+h2 { font-size: 18px; letter-spacing: -0.3px; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+p, li { font-size: 15px; }
+ul { padding-left: 22px; }
+.callout { background: #FFF8E8; border-left: 3px solid #F0A830; padding: 12px 16px; border-radius: 8px; margin: 16px 0; }
+.callout p { margin: 0; }
+a { color: var(--teal); }
+footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>Mirrorbite Terms of Service</h1>
+<p class="updated">Last updated: 2026-05-19</p>
+
+<div class="callout">
+<p><strong>Not medical advice.</strong> Mirrorbite returns directional categorical nutrition feedback. It is not a substitute for a registered dietitian or any licensed health professional. Do not use Mirrorbite to make medical or treatment decisions.</p>
+</div>
+
+<h2>1. Acceptance</h2>
+<p>By installing or using Mirrorbite (the "app"), you agree to these Terms of Service. If you do not agree, do not install or use the app.</p>
+
+<h2>2. License</h2>
+<p>We grant you a limited, non-exclusive, non-transferable, revocable license to install and use the app on iOS devices you own or control, for personal, non-commercial use, subject to these Terms and to Apple's standard App Store license.</p>
+
+<h2>3. What Mirrorbite does</h2>
+<ul>
+  <li>Accepts a meal photo from your iPhone camera or library.</li>
+  <li>Sends the photo encrypted over HTTPS to our analysis proxy, which queries a generative AI model (Gemini 2.5 Flash, with Claude Sonnet 4 as fallback).</li>
+  <li>Returns a structured JSON result: a 0–100 directional index, three categorical nutritional axes (good / caution / low), one strength bullet, one improvement bullet, the identified dish, and a confidence level.</li>
+  <li>If the AI is unsure, the app returns a "withheld" judgment with a reason (e.g., photo unclear, non-food, multiple meals). This is intentional and is not a malfunction.</li>
+</ul>
+
+<h2>4. What Mirrorbite does NOT do</h2>
+<ul>
+  <li>It does not provide medical advice, diagnosis, or treatment.</li>
+  <li>It does not provide specific calorie counts, gram amounts, or macronutrient breakdowns. We return categorical levels only.</li>
+  <li>It does not detect allergens or dietary restrictions reliably. Do not rely on the app for allergy avoidance.</li>
+  <li>It does not store, share, or use your photos for any purpose other than the single analysis call.</li>
+</ul>
+
+<h2>5. Subscriptions</h2>
+<p>Mirrorbite Pro is offered as an auto-renewable subscription:</p>
+<ul>
+  <li>Weekly: $6.99 USD / week (regional equivalents apply)</li>
+  <li>Yearly: $39.99 USD / year (regional equivalents apply)</li>
+</ul>
+<p>Subscriptions are managed through your Apple ID. Auto-renewal occurs within 24 hours before the end of the current period, unless you cancel at least 24 hours before that point. You may cancel anytime by going to <em>Settings → Apple ID → Subscriptions</em>.</p>
+<p>If you cancel mid-period, you retain access until the end of the paid period. Refunds are handled through Apple's standard process; we do not issue refunds directly.</p>
+
+<h2>6. AI limitations and accuracy</h2>
+<p>Photo-only nutritional estimation has fundamental accuracy limitations. We have deliberately designed Mirrorbite to:</p>
+<ul>
+  <li>Refuse to output gram amounts or calorie counts (we never invent specific numbers).</li>
+  <li>Withhold judgment when the photo is unclear, non-food, or shows multiple meals.</li>
+  <li>Use range expressions ("noticeably", "meaningfully") rather than pinpoint deltas in next-meal suggestions.</li>
+</ul>
+<p>Despite this design, results may be inaccurate. <strong>You are responsible for evaluating whether Mirrorbite's output is appropriate for your own dietary needs.</strong> If you have any health condition, are pregnant, breastfeeding, taking medication, or under the care of a clinician, consult that clinician before changing your diet based on app output.</p>
+
+<h2>7. Acceptable use</h2>
+<p>You agree not to:</p>
+<ul>
+  <li>Reverse-engineer, decompile, or attempt to extract the source of the app or the AI models.</li>
+  <li>Use the app to upload images that you do not have the right to use, or that contain sensitive personal information of others.</li>
+  <li>Use the app for any unlawful purpose.</li>
+</ul>
+
+<h2>8. Liability disclaimer</h2>
+<p>To the maximum extent permitted by law, Mirrorbite, Starving Effort, and our suppliers are not liable for any indirect, incidental, consequential, special, or punitive damages, including without limitation lost profits, lost data, or personal injury, arising from your use of the app, even if advised of the possibility of such damages.</p>
+<p>Our total liability for any claim under these Terms is limited to the amount you paid Mirrorbite (via Apple) in the 12 months preceding the claim.</p>
+
+<h2>9. Changes to the Terms</h2>
+<p>We may update these Terms from time to time. Material changes will be noted by updating the "Last updated" date and, where appropriate, surfacing an in-app notice. Continued use of the app after a change constitutes acceptance.</p>
+
+<h2>10. Governing law</h2>
+<p>These Terms are governed by the laws of Japan, without regard to conflict of laws principles. Disputes arising from these Terms are subject to the exclusive jurisdiction of the Tokyo District Court.</p>
+
+<h2>11. Contact</h2>
+<p>Questions about these Terms: <a href="mailto:hello@starving-effort.com">hello@starving-effort.com</a></p>
+
+<footer>
+© 2026 Starving Effort · <a href="/mirrorbite/privacy">Privacy Policy</a> · <a href="/mirrorbite">Mirrorbite home</a>
+</footer>
+</body>
+</html>

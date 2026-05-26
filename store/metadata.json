@@ -1,0 +1,143 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "generated": "2026-05-19",
+    "purpose": "App Store Connect upload payload — copy-paste sections during Day 7 submission"
+  },
+
+  "app_information": {
+    "name": "Mirrorbite",
+    "subtitle_30char": "Honest food reveal in 60s",
+    "bundle_id": "app.starvingeffort.mirrorbite",
+    "sku": "mirrorbite-v0",
+    "primary_language": "English (U.S.)",
+    "primary_category": "Health & Fitness",
+    "secondary_category": "Food & Drink",
+    "content_rating": "4+",
+    "available_countries_phase_0": ["USA", "GBR", "CAN", "AUS"],
+    "available_countries_phase_1": ["USA", "GBR", "CAN", "AUS", "JPN", "KOR", "TWN"]
+  },
+
+  "version_information": {
+    "version_string": "1.0.0",
+    "build_number": "1",
+    "copyright": "© 2026 Starving Effort. All rights reserved.",
+    "promotional_text_170char": "Free 3 reveals/month. One photo, 60s, directional read with no invented numbers. Honest about what we can and can't see. Subscribe for unlimited.",
+    "whats_new_in_this_version": "Initial release.\n\n• 3 free reveals per month — try before you subscribe\n• 1-photo meal reveals with 0-100 directional index\n• 3-axis read: protein / carb balance / fiber\n• Honest withheld responses when the photo's unclear\n• Encrypted in transit, analyzed once, deleted from server"
+  },
+
+  "description_4000char": "Mirrorbite is the food-reveal app that won't invent numbers it can't see.\n\nOne photo of your meal. Sixty seconds. You get a directional read — a 0 to 100 index, three nutritional axes (protein, carb balance, fiber), one strength, one next-meal hook. No grams. No invented numbers.\n\nWhen we're unsure, we tell you. We hold back instead of guessing.\n\nFREE TO TRY:\n• 3 free reveals every calendar month — no card needed, no trial countdown\n• Refills automatically on the 1st of each month\n• Subscribe only after you've tasted what we do\n\nFOR PEOPLE WHO:\n• Want directional feedback, not medical diagnosis\n• Don't trust photo-based calorie counts (because the math doesn't work)\n• Won't pay before knowing if an app is honest with them\n\nHOW IT WORKS:\n• Snap a meal. Up to 60-second read.\n• See your index 0-100. Categorical axes (good / caution / low).\n• Get one specific dinner tweak: \"Add a side of beans — fiber like that could meaningfully lift your index.\"\n• If we can't read the photo clearly, we say \"I held back this one.\" That's not a bug — that's the feature. (Withheld reads don't count against your free quota.)\n\nWHY DIRECTIONAL, NOT EXACT?\nIndependent research shows photo-only nutrition estimates are accurate to roughly ±30% at best. Pretending otherwise creates fake precision. Mirrorbite stays directional on purpose.\n\nPRICING:\n• 3 free reveals per month — always\n• Unlimited: $6.99 / week or $39.99 / year (save 89%)\n• Cancel anytime in Settings → Subscriptions\n• Apple Small Business Program member (15% Apple cut)\n\nPRIVACY:\n• Your photo is encrypted in transit, analyzed once, then deleted from our server.\n• We never store images or use them to train models.\n• Directional feedback only. Mirrorbite is not medical advice and not a substitute for a registered dietitian.\n\nNOT:\n• A calorie counter (we don't invent numbers)\n• A medical app (we are not your dietitian)\n• A barcode scanner or food log (photo-first only)\n\nTry it free. If we're not for you, walk away — no card on file.\n\n— Built by a tiny team that wanted honest food feedback.\n\nQUESTIONS? hello@starving-effort.com\n",
+
+  "keywords_100char_total": "food,meal,nutrition,AI,photo,calorie,tracker,scan,healthy,diet,weight,protein,fiber,balanced,honest",
+
+  "support_url": "https://mirrorbite.starving-effort.com/support",
+  "marketing_url": "https://mirrorbite.starving-effort.com",
+  "privacy_policy_url": "https://mirrorbite.starving-effort.com/privacy",
+  "terms_of_service_url": "https://mirrorbite.starving-effort.com/terms",
+
+  "in_app_purchases": [
+    {
+      "product_id": "mb_weekly_v1",
+      "reference_name": "Mirrorbite Pro Weekly",
+      "type": "Auto-Renewable Subscription",
+      "subscription_group": "mirrorbite_main",
+      "duration": "1 week",
+      "free_trial": null,
+      "promotional_offer": null,
+      "_pricing_note": "Aligned with Mau Lazymaxxers Prayer Lock pricing pattern ($6.99 / wk). Keeps single-tap price under Apple's predatory-pricing watchlist while preserving Save-vs-yearly anchor effect. productID intentionally has no price-baked suffix (was mb_weekly_999_usa) for future change resilience.",
+      "price_tier_usa": "Tier 7",
+      "price_usd": 6.99,
+      "review_screenshot_required": true,
+      "review_notes": "Weekly subscription. Auto-renews 24h before period ends. Cancel anytime in iOS Settings."
+    },
+    {
+      "product_id": "mb_annual_v1",
+      "reference_name": "Mirrorbite Pro Yearly",
+      "type": "Auto-Renewable Subscription",
+      "subscription_group": "mirrorbite_main",
+      "duration": "1 year",
+      "free_trial": null,
+      "promotional_offer": null,
+      "_pricing_note": "$39.99 / year sits ~43% below Cal AI ($69.99) — primary differentiation lever for 'switch from Cal AI' positioning. productID intentionally has no price-baked suffix (was mb_annual_4999_usa) for future change resilience.",
+      "_promo_offer_note": "Retention discount offer planned for Phase 1 (post-launch). Not enabled at v1.0 launch to avoid Misleading-subscription reject. Implement via App Store Connect Promotional Offers + RevenueCat package once first batch of 1000 subscribers is reached.",
+      "price_tier_usa": "Tier 40",
+      "price_usd": 39.99,
+      "review_screenshot_required": true,
+      "review_notes": "Annual subscription, default-selected in paywall. Auto-renewable. Cancel via Apple ID Settings → Subscriptions."
+    }
+  ],
+
+  "subscription_group": {
+    "name": "mirrorbite_main",
+    "display_name": "Mirrorbite Pro",
+    "subscription_disclosure_en": "Mirrorbite Pro unlocks daily reveals with directional nutrition feedback. Auto-renewable subscription. Payment will be charged to your Apple ID account at confirmation of purchase. Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Account will be charged for renewal within 24 hours prior to the end of the current period. Subscriptions may be managed and auto-renewal turned off by going to Settings > Apple ID > Subscriptions after purchase. Terms apply.",
+    "renewal_disclosure_short": "Auto-renews until canceled. Cancel anytime in Settings."
+  },
+
+  "age_rating_questionnaire": {
+    "cartoon_or_fantasy_violence": "None",
+    "realistic_violence": "None",
+    "prolonged_graphic_violence": "None",
+    "profanity_or_crude_humor": "None",
+    "mature_suggestive_themes": "None",
+    "horror_or_fear_themes": "None",
+    "medical_treatment_information": "None — Mirrorbite returns categorical directional nutrition assessments only, never medical advice. Explicit non-medical disclaimer present in app and Terms.",
+    "alcohol_tobacco_drug_use": "None",
+    "gambling_or_contests": "None",
+    "unrestricted_web_access": "None",
+    "gambling_simulated": "None",
+    "user_generated_content": "None (no upload to others, photos are not stored)",
+    "result": "4+",
+    "_note": "medical_treatment_information set to None: Mirrorbite refuses to output specific calorie/gram numbers and explicitly disclaims medical advice. Category Health & Fitness is editorial/lifestyle, not medical."
+  },
+
+  "ai_label_compliance": {
+    "uses_generative_ai": true,
+    "ai_provider_primary": "Google Gemini 2.5 Flash (via Cloudflare Worker proxy)",
+    "ai_provider_escalation": "Anthropic Claude Sonnet 4 (for low-confidence cases)",
+    "ai_purpose": "Analyzing meal photos to return a categorical directional nutrition assessment (0-100 index, 3 axes, strength + improvement bullets, identified dish, confidence level).",
+    "user_disclosed_in_app": true,
+    "user_disclosure_locations": [
+      "Frame 0 (Privacy) onboarding — 'analyzed once, deleted from our server' + 'We never invent numbers we can't see'",
+      "Reveal-delivered screen footer — 'Directional only. Not medical advice.'",
+      "Reveal-withheld screen body — 'Mirrorbite never invents numbers it can't see.'"
+    ],
+    "training_uses_user_data": false,
+    "user_can_opt_out": false,
+    "rationale_for_no_opt_out": "AI analysis is the core product. Users who do not want AI processing should not use the app. This is disclosed in Frame 0 onboarding before any photo capture."
+  },
+
+  "app_review_information": {
+    "test_account_required": false,
+    "test_account_notes": "No login. Onboarding includes a free sample reveal in ~30 seconds — Reviewer experiences the full product before any paywall. After onboarding, the camera home shows history thumbnails that open pre-generated sample reveals without subscription.",
+    "demo_walkthrough": "Fast path for Reviewer (30 seconds total): 1) Frame 0 → Got it. 2) A3 sample reveal auto-shows (free experience, no paywall yet). 3) Tap Continue → paywall appears. 4) Tap the × in the top-right (visible after 5s, Apple HIG) → camera home. 5) Tap any history thumbnail to see additional sample reveals (delivered + withheld) without subscribing. Optional: build with EXPO_PUBLIC_REVIEW_MODE=1 skips onboarding entirely.",
+    "vision_api_proxy": "Cloudflare Worker at https://mirrorbite-vision-proxy.forvyrcompany.workers.dev — we proxy Gemini 2.5 Flash + Claude Sonnet 4 server-side so API keys never reach the client.",
+    "privacy_note": "Photos are sent encrypted (HTTPS) to our Worker (Cloudflare edge), forwarded to Google Gemini and (for low-confidence cases) Anthropic Claude, analyzed once, and deleted. We never store images or use them to train models. Disclosed in Frame 0, Privacy Policy §3, and AI label.",
+    "subscription_note": "Weekly $6.99 / yearly $39.99 (default-selected, save 89%). Onboarding provides a free sample reveal before the paywall. Paywall close × appears after 5s per Apple HIG. Restore Purchases button on paywall. Cancellation managed via Apple ID Settings.",
+    "health_claim_disclaimer": "Mirrorbite returns CATEGORICAL directional indices (good / caution / low), NEVER specific gram amounts, calorie numbers, or medical advice. Disclaimers present on Frame 0, every Reveal screen footer, and Reveal-withheld card. Not a substitute for a registered dietitian.",
+    "contact_email": "hello@starving-effort.com",
+    "contact_phone": "(omit — use email only)"
+  },
+
+  "app_privacy_questionnaire": {
+    "data_types_collected": {
+      "contact_info": [],
+      "health_fitness": ["Other Health Fitness — directional nutrition assessments only, no medical data"],
+      "financial_info": [],
+      "location": [],
+      "sensitive_info": [],
+      "contacts": [],
+      "user_content": ["Photos — sent encrypted, analyzed once, deleted from server"],
+      "browsing_history": [],
+      "search_history": [],
+      "identifiers": ["Device ID — for RevenueCat subscription tracking only"],
+      "purchases": ["Purchase History — for subscription management via RevenueCat"],
+      "usage_data": ["Product Interaction — anonymous app open / reveal count for retention metrics"],
+      "diagnostics": ["Crash Data — anonymous via Expo / EAS"],
+      "other": []
+    },
+    "data_used_for_tracking": false,
+    "data_linked_to_user": false,
+    "data_not_linked_to_user": ["User Content (photos, deleted immediately)", "Identifiers (device for RC only)", "Purchases", "Usage Data", "Diagnostics"]
+  }
+}

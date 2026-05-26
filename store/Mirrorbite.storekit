@@ -1,0 +1,69 @@
+{
+  "_note" : "Local Xcode StoreKit Configuration. USA storefront only — Phase 0 launch regions (GBR/CAN/AUS) are priced via Apple Price Tier 7 (weekly $6.99) / Tier 40 (yearly $39.99) in App Store Connect, which derives equivalent local prices automatically. To verify GBR/CAN/AUS UX in the simulator, change _storefront below to GBR / CAN / AUS, no other edits needed. Mirrorbite refuses regional pricing override at launch — Apple's auto-derived tier prices are intentionally used. Pricing aligned with Mau Lazymaxxers Prayer Lock pattern (weekly $6.99 / yearly $39.99, Save 89%).",
+  "identifier" : "F2A1B3C4-D5E6-4789-A012-3456789ABCDE",
+  "nonRenewingSubscriptions" : [],
+  "products" : [],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21474836",
+      "localizations" : [],
+      "name" : "mirrorbite_main",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "6.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1A2B3C4D",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Mirrorbite Pro — weekly subscription. One photo, 60-second directional read. No grams. No invented numbers.",
+              "displayName" : "Mirrorbite Pro Weekly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "mb_weekly_v1",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Mirrorbite Pro Weekly",
+          "subscriptionGroupID" : "21474836",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : []
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "5E6F7A8B",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Mirrorbite Pro — yearly subscription, default selected (Save 89%). One photo, 60-second directional read.",
+              "displayName" : "Mirrorbite Pro Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "mb_annual_v1",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Mirrorbite Pro Yearly",
+          "subscriptionGroupID" : "21474836",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : []
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

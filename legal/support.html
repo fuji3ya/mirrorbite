@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mirrorbite — Support</title>
+<style>
+:root { --teal: #3DB8A8; --teal-50: #F2FAF9; --ink: #1c1c1e; --muted: #6B6F76; --line: #ebebeb; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "SF Pro Text", Inter, sans-serif; color: var(--ink); max-width: 720px; margin: 0 auto; padding: 32px 24px 80px; line-height: 1.6; }
+h1 { font-size: 28px; letter-spacing: -0.5px; margin: 0 0 8px; }
+.updated { color: var(--muted); font-size: 14px; margin: 0 0 32px; }
+h2 { font-size: 18px; letter-spacing: -0.3px; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.faq { margin: 16px 0; }
+.faq-q { font-weight: 600; cursor: pointer; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.faq-a { padding: 8px 0 16px; font-size: 15px; color: #3c3c3e; }
+.callout { background: var(--teal-50); border-left: 3px solid var(--teal); padding: 14px 18px; border-radius: 10px; margin: 24px 0; }
+.callout p { margin: 0; }
+a { color: var(--teal); }
+footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>Mirrorbite Support</h1>
+<p class="updated">Last updated: 2026-05-19</p>
+
+<div class="callout">
+<p>Need help fast? Email <a href="mailto:hello@starving-effort.com">hello@starving-effort.com</a> with your device model and iOS version. We reply within 48 hours.</p>
+</div>
+
+<h2>Common questions</h2>
+
+<div class="faq">
+  <div class="faq-q">Why did my photo come back as "I held back this one"?</div>
+  <div class="faq-a">When our AI is uncertain about the dish (blurry photo, multiple meals in frame, or non-food), we deliberately refuse to guess. This is by design. Retake the photo with good lighting and a single meal in the center of the frame.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">Why no specific calorie count?</div>
+  <div class="faq-a">Photo-based calorie estimation is accurate to within ±30% at best in published research. Pretending otherwise creates the "9g protein on tortilla chips" hallucination problem we've all seen in other apps. We refuse to invent numbers we can't see. You get categorical levels (good / caution / low) and one specific next-meal tweak instead.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">How do I cancel my subscription?</div>
+  <div class="faq-a">Go to iPhone <strong>Settings → Apple ID → Subscriptions → Mirrorbite Pro → Cancel Subscription</strong>. You'll keep access until the end of the paid period.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">Can I get a refund?</div>
+  <div class="faq-a">Refunds are processed through Apple's standard refund process at <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>. We don't issue refunds directly because the purchase is via Apple. Common refund reasons (accidental subscription, didn't use the app) are usually approved.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">Why does the app need camera access?</div>
+  <div class="faq-a">Mirrorbite's only input is a meal photo. We use camera access exclusively to capture that photo. You can also choose photos from your library instead. Photos are sent encrypted to our analysis server, processed once, and deleted immediately — never stored.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">Does Mirrorbite work on iPad?</div>
+  <div class="faq-a">Yes, the app is universal (iPhone + iPad). On iPad the UI scales to portrait orientation. Photo capture works on iPad's camera or by choosing from library.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">Is Mirrorbite medical advice?</div>
+  <div class="faq-a"><strong>No.</strong> Mirrorbite returns directional categorical feedback for general healthy-eating awareness. It is not medical advice, not a diagnosis, not a treatment recommendation, and not a substitute for a registered dietitian. If you have a health condition, are pregnant, breastfeeding, taking medication, or under the care of a clinician, talk to that clinician before changing your diet.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">What languages are supported?</div>
+  <div class="faq-a">Phase 0 (initial release): English only. We're working on Japanese (Phase 1), Korean, and Traditional Chinese localizations.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">Does Mirrorbite work offline?</div>
+  <div class="faq-a">The onboarding flow, paywall, and history thumbs work offline. The AI analysis itself requires an internet connection (we don't ship a full AI model on-device). Future versions may add an on-device fallback.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">How is my data used?</div>
+  <div class="faq-a">See the <a href="/mirrorbite/privacy">Privacy Policy</a>. TL;DR: we collect nothing about you personally. No name, no email, no contacts, no location. The only data is your meal photo (sent encrypted, deleted after one call), the analysis result (stored on your device), and your anonymous subscription state (via RevenueCat).</div>
+</div>
+
+<h2>Reporting a problem</h2>
+<p>Found a bug or hallucination claim? Email us with:</p>
+<ul>
+  <li>Device model and iOS version</li>
+  <li>App version (Settings → Mirrorbite at the bottom of the screen)</li>
+  <li>What you tapped and what happened</li>
+  <li>The photo (if comfortable sharing — we'll delete it after diagnosis)</li>
+</ul>
+
+<h2>Press / Partnership</h2>
+<p>For press inquiries or partnership ideas: <a href="mailto:hello@starving-effort.com">hello@starving-effort.com</a></p>
+
+<footer>
+© 2026 Starving Effort ·
+<a href="/mirrorbite/privacy">Privacy</a> ·
+<a href="/mirrorbite/terms">Terms</a> ·
+<a href="/mirrorbite">Home</a>
+</footer>
+</body>
+</html>

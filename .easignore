@@ -1,0 +1,55 @@
+# Exclude from EAS Build upload (similar to .gitignore but EAS-specific)
+# Default .gitignore is respected; this adds exclusions for build artifacts.
+
+node_modules
+.expo
+ios/Pods
+ios/build
+ios/.xcode.env.local
+android/build
+android/.gradle
+android/app/build
+android/.cxx
+*.log
+*.tmp
+
+# Secrets must NEVER be uploaded to the EAS Build cloud.
+# credentialsSource: "local" means EAS CLI reads credentials.json + .p12 +
+# .mobileprovision locally and passes them to the build server in-memory — the
+# files themselves do not need to be in the uploaded source tarball.
+# AuthKey_*.p8 is only consumed by `eas submit`, which runs on this machine, so
+# it must NEVER be uploaded either.
+.secrets/*
+
+# Local credentials files (eas reads them locally, no upload needed)
+# Note: credentials.json IS needed for build, so keep it
+credentials.local.json
+
+# Generated artifacts
+generated/
+build/
+dist/
+out/
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Test artifacts
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation that doesn't need to be in build
+*.md
+!README.md
+docs/
+
+# Stores assets that aren't bundled
+store/screenshots/
+store/screenshot-*.png

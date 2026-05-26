@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mirrorbite — Privacy Policy</title>
+<style>
+:root { --teal: #3DB8A8; --ink: #1c1c1e; --muted: #6B6F76; --line: #ebebeb; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "SF Pro Text", Inter, sans-serif; color: var(--ink); max-width: 720px; margin: 0 auto; padding: 32px 24px 80px; line-height: 1.6; }
+h1 { font-size: 28px; letter-spacing: -0.5px; margin: 0 0 8px; }
+.updated { color: var(--muted); font-size: 14px; margin: 0 0 32px; }
+h2 { font-size: 18px; letter-spacing: -0.3px; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+p, li { font-size: 15px; }
+ul { padding-left: 22px; }
+.callout { background: #F2FAF9; border-left: 3px solid var(--teal); padding: 12px 16px; border-radius: 8px; margin: 16px 0; }
+.callout p { margin: 0; }
+a { color: var(--teal); }
+footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>Mirrorbite Privacy Policy</h1>
+<p class="updated">Last updated: 2026-05-19</p>
+
+<div class="callout">
+<p><strong>Two promises:</strong> Your photo is encrypted in transit, analyzed once, and deleted from our server. We never store images or use them to train models.</p>
+</div>
+
+<h2>1. What we collect</h2>
+<p>Mirrorbite collects the minimum data needed for the app to work:</p>
+<ul>
+  <li><strong>Meal photos</strong> — captured by you and sent over encrypted HTTPS to our analysis proxy. Photos are processed once and deleted from our server immediately after the analysis call returns. We do not retain images in any form.</li>
+  <li><strong>Analysis results</strong> — the directional index (0–100), 3 categorical axes (protein / carb balance / fiber), strength + improvement bullets, identified dish, and confidence level. These are stored on your device (AsyncStorage). Server-side, we keep only anonymized aggregate counts for reliability monitoring.</li>
+  <li><strong>Onboarding choices</strong> — your goal hint (e.g., balanced eating), eat-out frequency, and 3 baseline meal categories. Stored on device only.</li>
+  <li><strong>Subscription state</strong> — managed by RevenueCat using an anonymous device-bound identifier. No name, email, phone, or payment card details are seen by Mirrorbite.</li>
+  <li><strong>Anonymous usage data</strong> — app open count, reveal count, paywall view count, retention cohort. No personally identifiable information.</li>
+  <li><strong>Crash diagnostics</strong> — anonymous via Expo/EAS.</li>
+</ul>
+
+<h2>2. What we don't collect</h2>
+<ul>
+  <li>We do not collect your name, email address, phone number, contacts, location, or browsing history.</li>
+  <li>We do not require an account. No login.</li>
+  <li>We do not track you across apps or websites.</li>
+  <li>We do not sell or share data with third parties for advertising.</li>
+</ul>
+
+<h2>3. How AI analysis works</h2>
+<p>Meal photos are processed by the following third-party services, in this order:</p>
+<ul>
+  <li><strong>Cloudflare Workers</strong> (proxy, edge servers in the US and EU) — receives your encrypted photo, strips identifying metadata, and forwards only the image bytes. Cloudflare retains no copy beyond the request lifecycle. See <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare Privacy Policy</a>.</li>
+  <li><strong>Google Gemini 2.5 Flash</strong> (primary analysis, US) — returns the directional JSON result. Google states paid Gemini API requests are not used to train models. See <a href="https://cloud.google.com/terms/data-processing-addendum">Google Cloud DPA</a> and <a href="https://ai.google.dev/gemini-api/terms">Gemini API Terms</a>.</li>
+  <li><strong>Anthropic Claude Sonnet 4</strong> (escalation for low-confidence cases only, US) — returns the structured result. Anthropic states API inputs and outputs are not used to train models by default. See <a href="https://www.anthropic.com/legal/privacy">Anthropic Privacy Policy</a>.</li>
+</ul>
+<p>Before any photo leaves your device, Mirrorbite re-encodes the image on-device so that camera-model, date/time, and GPS location metadata (EXIF) are removed. Only the resulting clean JPEG bytes are sent over HTTPS.</p>
+<p>The Cloudflare Worker proxy:</p>
+<ul>
+  <li>forwards only those clean image bytes to the AI provider,</li>
+  <li>returns the structured JSON result to your device,</li>
+  <li>deletes the image from temporary memory immediately after the response.</li>
+</ul>
+<p><strong>We do not have separate data-sharing agreements for advertising, analytics, or any other purpose with these providers.</strong> Their use is strictly limited to the single analysis call. We also do not use any of the user-content data described in §1 for advertising or tracking, in line with the App Privacy questionnaire we filed with Apple.</p>
+
+<h2>4. International data transfer</h2>
+<p>Our AI analysis providers operate globally. Image bytes may transit through servers in the United States and the European Union during the single analysis call. No retained copy is kept outside of your device.</p>
+
+<h2>5. AI assistance disclosure</h2>
+<p>This app uses generative AI (Google Gemini 2.5 Flash and Anthropic Claude Sonnet 4) to analyze meal photos. The output is directional and categorical (good / caution / low), never a precise numeric calorie or gram count. When the AI is uncertain, the app says so by returning a "withheld" judgment. This is by design.</p>
+
+<h2>6. Children</h2>
+<p>Mirrorbite is rated 4+. It is not directed at children under 13 and does not knowingly collect data from children. If you believe a child has used the app, please contact us and we will delete any associated on-device data via cancellation.</p>
+
+<h2>7. Your rights</h2>
+<ul>
+  <li><strong>In-app data deletion</strong>: on the camera screen, tap <em>Clear all data</em>. This removes your reveal history, onboarding choices, and any cached results from your device immediately.</li>
+  <li><strong>Uninstall</strong>: removing the app from your device also removes all on-device data.</li>
+  <li><strong>Server-side data</strong>: we keep only anonymized aggregate counts (no identifiers). Email us at <a href="mailto:hello@starving-effort.com">hello@starving-effort.com</a> if you need confirmation.</li>
+  <li><strong>Subscription cancellation</strong>: tap <em>Manage subscription</em> on the camera screen, or open iOS <em>Settings → Apple ID → Subscriptions</em>.</li>
+  <li><strong>Refunds</strong>: handled through Apple's standard refund process.</li>
+</ul>
+
+<h2>8. Not medical advice</h2>
+<p>Mirrorbite returns <strong>directional</strong> feedback only. It is not medical advice, not a diagnosis, not a substitute for consultation with a registered dietitian or other licensed health professional. Do not use Mirrorbite to make medical or treatment decisions.</p>
+
+<h2>9. Changes to this policy</h2>
+<p>We will note material changes by updating the "Last updated" date at the top of this page and, where appropriate, surfacing a notice in the app on next launch.</p>
+
+<h2>10. Contact</h2>
+<p>Questions about privacy: <a href="mailto:hello@starving-effort.com">hello@starving-effort.com</a></p>
+
+<footer>
+© 2026 Starving Effort · <a href="/mirrorbite/terms">Terms of Service</a> · <a href="/mirrorbite">Mirrorbite home</a>
+</footer>
+</body>
+</html>

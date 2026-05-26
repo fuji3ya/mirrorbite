@@ -1,0 +1,18 @@
+# Cloudflare Pages project config — Mirrorbite legal site
+# Deploy with: npx wrangler pages deploy . --project-name=mirrorbite-legal --branch=main
+#
+# Custom domain mapping (one-time, Cloudflare dashboard or via API):
+#   mirrorbite.starving-effort.com/* → this Pages project root
+#
+# Resulting URLs (also referenced from store/metadata.json):
+#   https://mirrorbite.starving-effort.com/         → index.html (marketing)
+#   https://mirrorbite.starving-effort.com/privacy  → privacy.html
+#   https://mirrorbite.starving-effort.com/terms    → terms.html
+#   https://mirrorbite.starving-effort.com/support  → support.html
+
+name = "mirrorbite-legal"
+compatibility_date = "2026-05-19"
+pages_build_output_dir = "."
+
+[env.production]
+# No environment variables required — this is purely a static site.

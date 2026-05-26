@@ -1,0 +1,69 @@
+{
+  "cli": { "version": ">= 16.0.0", "appVersionSource": "remote" },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": { "simulator": true },
+      "env": {
+        "EXPO_PUBLIC_VISION_API_URL": "http://localhost:8787/api/vision",
+        "EXPO_PUBLIC_MB_CLIENT_SECRET": "dev-placeholder",
+        "EXPO_PUBLIC_RC_API_KEY_IOS": "appl_dev_placeholder",
+        "EXPO_PUBLIC_REVIEW_MODE": "0"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false,
+        "buildConfiguration": "Release",
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_VISION_API_URL": "https://mirrorbite-vision-proxy.forvyrcompany.workers.dev/api/vision",
+        "EXPO_PUBLIC_REVIEW_MODE": "0"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "credentialsSource": "local",
+      "ios": {
+        "buildConfiguration": "Release",
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "EXPO_PUBLIC_VISION_API_URL": "https://mirrorbite-vision-proxy.forvyrcompany.workers.dev/api/vision",
+        "EXPO_PUBLIC_REVIEW_MODE": "0"
+      }
+    },
+    "review-submission": {
+      "extends": "production",
+      "env": {
+        "EXPO_PUBLIC_VISION_API_URL": "https://mirrorbite-vision-proxy.forvyrcompany.workers.dev/api/vision",
+        "EXPO_PUBLIC_REVIEW_MODE": "1"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6772862571",
+        "appleId": "forvyrcompany@gmail.com",
+        "appleTeamId": "YXFS993Z4K",
+        "ascApiKeyPath": "./.secrets/AuthKey_CQ7T58CX49.p8",
+        "ascApiKeyId": "CQ7T58CX49",
+        "ascApiKeyIssuerId": "cb16e608-d263-428a-998f-aa00eab7830b"
+      }
+    },
+    "review-submission": {
+      "ios": {
+        "ascAppId": "6772862571",
+        "appleId": "forvyrcompany@gmail.com",
+        "appleTeamId": "YXFS993Z4K",
+        "ascApiKeyPath": "./.secrets/AuthKey_CQ7T58CX49.p8",
+        "ascApiKeyId": "CQ7T58CX49",
+        "ascApiKeyIssuerId": "cb16e608-d263-428a-998f-aa00eab7830b"
+      }
+    }
+  }
+}

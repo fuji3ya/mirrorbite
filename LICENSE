@@ -1,0 +1,33 @@
+Mirrorbite — Source-Available License (All Rights Reserved)
+Copyright (c) 2026 Starving Effort
+
+This software and its associated assets are made publicly visible for
+transparency, security review, and personal learning. They are NOT released
+under a recognized open-source license.
+
+Permitted:
+  - Reading the code for personal study or security audit.
+  - Forking on GitHub for private learning / experimentation that is not
+    distributed publicly.
+  - Filing issues that report bugs in the official App Store version.
+
+Prohibited without prior written permission:
+  - Redistributing the code, modified or unmodified, to any third party.
+  - Using the code or any substantial portion of it in a commercial product.
+  - Building, publishing, or selling a derivative app under any platform
+    (App Store, Google Play, Web, etc.).
+  - Reusing the bundled image assets (icon, brand hero, sample-caesar) in
+    any other product, marketing material, or template.
+  - Removing or altering this license, the brand name, or attribution.
+
+The Mirrorbite name, logo (bitten plate), tagline, and visual identity
+are trademarks of Starving Effort and are not licensed for any use.
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For commercial use or partnership inquiries: hello@starving-effort.com
