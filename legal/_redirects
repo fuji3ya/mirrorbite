@@ -1,0 +1,14 @@
+# Cloudflare Pages redirects
+# Production URL: https://mirrorbite.starving-effort.com/<path>
+#
+# Cloudflare Pages auto-handles clean URLs (/privacy serves /privacy.html).
+# We only need backward-compat redirects for old paths used during development.
+
+# Backward-compat for old /mirrorbite/ paths
+/mirrorbite                /  301
+/mirrorbite/privacy        /privacy  301
+/mirrorbite/terms          /terms    301
+/mirrorbite/support        /support  301
+/mirrorbite/privacy.html   /privacy  301
+/mirrorbite/terms.html     /terms    301
+/mirrorbite/support.html   /support  301
