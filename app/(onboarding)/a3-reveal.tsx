@@ -44,7 +44,7 @@ export default function A3RevealScreen() {
           contentFit="cover"
           accessibilityLabel="Sample meal photo: chicken caesar salad in a white bowl"
         />
-        <RevealCard sample={sample} />
+        <RevealCard sample={sample} animate />
         <View style={styles.cta}>
           <CTAButton
             label="Got it — your turn"
