@@ -4,7 +4,8 @@
  * Day 4 ゲート 4: hallucination 払拭の主役 UI
  */
 
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { axisBarColor, axisStatusColor, colors, radii, shadows, spacing, typography, type AxisLevel } from '@/lib/theme';
 import type { RevealResult } from '@/lib/gpt4-vision';
 
@@ -26,9 +27,51 @@ const CONFIDENCE_COLOR: Record<string, string> = {
   low: colors.ink300,
 };
 
-export function RevealCard({ sample }: { sample: RevealResult }) {
+export function RevealCard({ sample, animate = false }: { sample: RevealResult; animate?: boolean }) {
   if (sample.judgement === 'withheld') return null;
   const dishColor = CONFIDENCE_COLOR[sample.confidence] ?? colors.ink300;
+
+  // Animation: score crossfade (?? → real value) + 3 axes staged fade-in.
+  // Onboarding A3 のみで使う (animate=true)。通常 reveal は instant。
+  const scoreOpacity = useRef(new Animated.Value(animate ? 0 : 1)).current;
+  const qmarkOpacity = useRef(new Animated.Value(animate ? 1 : 0)).current;
+  const axisOpacities = useRef([
+    new Animated.Value(animate ? 0 : 1),
+    new Animated.Value(animate ? 0 : 1),
+    new Animated.Value(animate ? 0 : 1),
+  ]).current;
+
+  useEffect(() => {
+    if (!animate) return;
+    // t=0..1000: ?? → real score crossfade
+    // t=1200, 1700, 2200: each axis fade in (400ms each)
+    Animated.parallel([
+      Animated.timing(qmarkOpacity, {
+        toValue: 0,
+        duration: 1000,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(scoreOpacity, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.stagger(
+        500,
+        axisOpacities.map((v) =>
+          Animated.timing(v, {
+            toValue: 1,
+            duration: 400,
+            delay: 1200,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ),
+      ),
+    ]).start();
+  }, [animate, axisOpacities, qmarkOpacity, scoreOpacity]);
 
   return (
     <View>
@@ -41,7 +84,20 @@ export function RevealCard({ sample }: { sample: RevealResult }) {
       {/* Score card */}
       <View style={styles.scoreCard}>
         <Text style={styles.eyebrow}>TODAY'S INDEX</Text>
-        <Text style={styles.scoreNum}>{sample.score}</Text>
+        <View style={styles.scoreNumWrap}>
+          <Animated.Text style={[styles.scoreNum, { opacity: scoreOpacity }]}>
+            {sample.score}
+          </Animated.Text>
+          {animate && (
+            <Animated.Text
+              style={[styles.scoreNum, styles.scoreNumOverlay, { opacity: qmarkOpacity }]}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              ??
+            </Animated.Text>
+          )}
+        </View>
         <Text style={styles.score100}>/100 index</Text>
         <Text style={styles.scoreCaption}>{sample.score_caption}</Text>
       </View>
@@ -57,7 +113,10 @@ export function RevealCard({ sample }: { sample: RevealResult }) {
           const w = LEVEL_WIDTH[lvl];
           const [barFrom, barTo] = axisBarColor[lvl];
           return (
-            <View key={axis} style={[styles.axisRow, idx > 0 && styles.axisBorder]}>
+            <Animated.View
+              key={axis}
+              style={[styles.axisRow, idx > 0 && styles.axisBorder, { opacity: axisOpacities[idx] }]}
+            >
               <Text style={styles.axisLabel}>{AXIS_LABEL[axis]}</Text>
               <View style={styles.barTrack}>
                 <View
@@ -70,7 +129,7 @@ export function RevealCard({ sample }: { sample: RevealResult }) {
               <Text style={[styles.axisStatus, { color: axisStatusColor[lvl] }]}>
                 {lvl.toUpperCase()}
               </Text>
-            </View>
+            </Animated.View>
           );
         })}
       </View>
@@ -138,13 +197,27 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: colors.teal600,
   },
+  scoreNumWrap: {
+    marginTop: spacing.s2,
+    height: 96,
+    minWidth: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   scoreNum: {
     fontSize: 96,
     fontWeight: '800',
     color: colors.ink900,
     lineHeight: 96,
     letterSpacing: -3,
-    marginTop: spacing.s2,
+    textAlign: 'center',
+  },
+  scoreNumOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    color: colors.ink400,
   },
   score100: { fontSize: 13, color: colors.ink500, marginTop: 4, fontWeight: '600' },
   scoreCaption: { fontSize: 13, color: colors.ink500, marginTop: spacing.s2, textAlign: 'center', lineHeight: 19 },
