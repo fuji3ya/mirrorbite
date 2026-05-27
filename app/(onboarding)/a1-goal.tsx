@@ -50,11 +50,11 @@ export default function GoalScreen() {
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.progress}>
-        <View style={[styles.progressFill, { width: '25%' }]} />
+        <View style={[styles.progressFill, { width: '33%' }]} />
       </View>
 
       <View style={styles.body}>
-        <Text style={styles.eyebrow}>Step 1 of 4</Text>
+        <Text style={styles.eyebrow}>Step 1 of 3</Text>
         <Text style={styles.title}>What are you{'\n'}working on?</Text>
         <Text style={styles.sub}>Pick the one that fits today.</Text>
 
