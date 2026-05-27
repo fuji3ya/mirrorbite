@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, InteractionManager, StyleSheet, Text, View } from 'react-native';
 import { axisBarColor, axisStatusColor, colors, radii, shadows, spacing, typography, type AxisLevel } from '@/lib/theme';
 import type { RevealResult } from '@/lib/gpt4-vision';
 
@@ -43,34 +43,39 @@ export function RevealCard({ sample, animate = false }: { sample: RevealResult; 
 
   useEffect(() => {
     if (!animate) return;
-    // t=0..1000: ?? → real score crossfade
-    // t=1200, 1700, 2200: each axis fade in (400ms each)
-    Animated.parallel([
-      Animated.timing(qmarkOpacity, {
-        toValue: 0,
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.timing(scoreOpacity, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.stagger(
-        500,
-        axisOpacities.map((v) =>
-          Animated.timing(v, {
-            toValue: 1,
-            duration: 400,
-            delay: 1200,
-            easing: Easing.out(Easing.quad),
-            useNativeDriver: true,
-          }),
+    // Stack navigator のスライド遷移 (300-500ms) が完了してから animation を start。
+    // 直接 start すると遷移中に animation が進行してしまい、ユーザーが画面を見たときには
+    // ?? がほぼ消えていて crossfade が見えない。InteractionManager で wait することで
+    // 「ユーザーが A3 を見始めた瞬間」を起点に animation 開始できる。
+    const handle = InteractionManager.runAfterInteractions(() => {
+      Animated.parallel([
+        Animated.timing(qmarkOpacity, {
+          toValue: 0,
+          duration: 1000,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(scoreOpacity, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.stagger(
+          500,
+          axisOpacities.map((v) =>
+            Animated.timing(v, {
+              toValue: 1,
+              duration: 400,
+              delay: 1200,
+              easing: Easing.out(Easing.quad),
+              useNativeDriver: true,
+            }),
+          ),
         ),
-      ),
-    ]).start();
+      ]).start();
+    });
+    return () => handle.cancel();
   }, [animate, axisOpacities, qmarkOpacity, scoreOpacity]);
 
   return (
