@@ -48,27 +48,40 @@ export function RevealCard({ sample, animate = false }: { sample: RevealResult; 
     // ?? がほぼ消えていて crossfade が見えない。InteractionManager で wait することで
     // 「ユーザーが A3 を見始めた瞬間」を起点に animation 開始できる。
     const handle = InteractionManager.runAfterInteractions(() => {
+      // Timing tuned for dramatic mystery→reveal feel (Mau #7).
+      // t=0..400    settle (user processes A3 landing, still sees ?? on score card)
+      // t=400..1900 ??→72 crossfade (1500ms, slow & dramatic with inOut easing)
+      // t=1900..2200 pause for breath (300ms)
+      // t=2200..2800 axis 0 (protein) fade-in (600ms)
+      // t=2900..3500 axis 1 (carb) fade-in (700ms stagger)
+      // t=3600..4200 axis 2 (fiber) fade-in
+      // Total reveal ≈ 4.2s
+      const SETTLE = 400;
+      const CROSSFADE = 1500;
+      const AXES_START = SETTLE + CROSSFADE + 300; // t=2200
       Animated.parallel([
         Animated.timing(qmarkOpacity, {
           toValue: 0,
-          duration: 1000,
-          easing: Easing.out(Easing.quad),
+          delay: SETTLE,
+          duration: CROSSFADE,
+          easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.timing(scoreOpacity, {
           toValue: 1,
-          duration: 1000,
-          easing: Easing.out(Easing.quad),
+          delay: SETTLE,
+          duration: CROSSFADE,
+          easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.stagger(
-          500,
+          700,
           axisOpacities.map((v) =>
             Animated.timing(v, {
               toValue: 1,
-              duration: 400,
-              delay: 1200,
-              easing: Easing.out(Easing.quad),
+              duration: 600,
+              delay: AXES_START,
+              easing: Easing.out(Easing.cubic),
               useNativeDriver: true,
             }),
           ),
