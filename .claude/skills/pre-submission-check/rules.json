@@ -1,0 +1,554 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "updated": "2026-05-27",
+    "source": "Apple App Store Review Guidelines (2026) + AppReview-AI 観察 + ship-ready-audit 蓄積知見",
+    "note": "53 rule から start、reject 事例見つかったら追加していく"
+  },
+  "rules": [
+    {
+      "id": "PRIV-001",
+      "category": "privacy_manifest",
+      "guideline": "5.1.2",
+      "severity": "critical",
+      "title": "Privacy Manifest (.xcprivacy) 必須",
+      "description": "2024 年 5 月以降、全アプリで PrivacyInfo.xcprivacy が必須。NSPrivacyAccessedAPITypes に使用 API category とその reason を申告する。",
+      "check_type": "app_json_privacy_manifests_exists",
+      "fix": "app.json の ios.privacyManifests.NSPrivacyAccessedAPITypes に下記 category を必要に応じて追加: UserDefaults (CA92.1), FileTimestamp (C617.1), SystemBootTime (35F9.1), DiskSpace (E174.1)"
+    },
+    {
+      "id": "PRIV-002",
+      "category": "privacy_manifest",
+      "guideline": "5.1.2",
+      "severity": "warning",
+      "title": "NSPrivacyTracking 明示申告",
+      "description": "tracking しない場合も NSPrivacyTracking: false を明示する。",
+      "check_type": "app_json_privacy_tracking_explicit",
+      "fix": "app.json の ios.privacyManifests に NSPrivacyTracking: false を追加"
+    },
+    {
+      "id": "PRIV-003",
+      "category": "privacy_manifest",
+      "guideline": "5.1.2",
+      "severity": "warning",
+      "title": "NSPrivacyCollectedDataTypes 申告",
+      "description": "収集する全データ type を NSPrivacyCollectedDataTypes に申告。実装と齟齬があるとリジェクト。",
+      "check_type": "app_json_collected_data_types_exists",
+      "fix": "PhotosorVideos / ProductInteraction / CrashData 等を実装に合わせて申告"
+    },
+    {
+      "id": "PERM-001",
+      "category": "permission_description",
+      "guideline": "5.1.1",
+      "severity": "critical",
+      "title": "NSCameraUsageDescription 曖昧表現禁止",
+      "description": "「アプリのために使用」「写真を撮影」等の vague な表現はリジェクト。具体的な用途を書く。",
+      "check_type": "info_plist_camera_desc_specific",
+      "patterns_to_reject": ["アプリのために", "アプリで使用", "for the app", "to take photos"],
+      "fix": "例: 'Mirrorbite uses your camera to capture meal photos. Each photo is encrypted in transit, analyzed once by our server, and then deleted.'"
+    },
+    {
+      "id": "PERM-002",
+      "category": "permission_description",
+      "guideline": "5.1.1",
+      "severity": "critical",
+      "title": "NSPhotoLibraryUsageDescription 曖昧表現禁止",
+      "description": "PhotoLibrary 使うなら具体的な用途を Info.plist に書く。",
+      "check_type": "info_plist_photolibrary_desc_specific",
+      "fix": "例: '... reads the meal photo you select.'"
+    },
+    {
+      "id": "PERM-003",
+      "category": "permission_description",
+      "guideline": "5.1.1",
+      "severity": "warning",
+      "title": "NSMicrophoneUsageDescription 不要なら削除",
+      "description": "audio 録音しないのに mic permission を要求するのは Apple 4.0 違反。expo-camera が自動追加するので注意。",
+      "check_type": "info_plist_mic_desc_appropriate",
+      "fix": "app.json の expo-camera plugin を `{ \"cameraPermission\": \"...\", \"recordAudioAndroid\": false }` 等で制限、または iOS 側で NSMicrophoneUsageDescription を空文字 or 削除"
+    },
+    {
+      "id": "ACC-001",
+      "category": "account_deletion",
+      "guideline": "5.1.1(v)",
+      "severity": "critical",
+      "title": "アカウント削除機能 (login 機能あれば必須)",
+      "description": "2022 年 6 月以降、login 機能があるアプリは app 内から直接 account 削除できる必要がある。サイト誘導不可。",
+      "check_type": "account_deletion_present_if_login",
+      "fix": "Settings → Account → 'Delete Account' UI を実装。データ完全削除 + 削除完了通知。"
+    },
+    {
+      "id": "ATT-001",
+      "category": "att",
+      "guideline": "2.5.4",
+      "severity": "critical",
+      "title": "ATT framework (tracking 使うなら必須)",
+      "description": "user を tracking するなら NSUserTrackingUsageDescription + ATTrackingManager 実装が必須。",
+      "check_type": "info_plist_att_description_if_tracking",
+      "fix": "Info.plist に NSUserTrackingUsageDescription 追加、tracking 開始前に ATTrackingManager.requestTrackingAuthorization 呼ぶ"
+    },
+    {
+      "id": "AI-001",
+      "category": "ai_content",
+      "guideline": "1.2 / 4.7.5",
+      "severity": "warning",
+      "title": "AI 生成コンテンツのラベル",
+      "description": "AI で生成したコンテンツを user に表示する場合、AI 生成であることを明示するラベルが推奨される。Apple は 2024-2026 で AI コンテンツの transparency を強く求めるようになった。",
+      "check_type": "ai_content_label_if_ai_used",
+      "fix": "description / UI で 'AI が生成した分析結果です' 等を明示。フィルタリング (有害内容 block) も実装。"
+    },
+    {
+      "id": "AI-002",
+      "category": "ai_content",
+      "guideline": "1.2",
+      "severity": "warning",
+      "title": "AI 生成の不適切コンテンツ filter",
+      "description": "AI 出力に有害 / 不適切な内容が混じる可能性がある場合、フィルタリングや user 報告機能を実装する。",
+      "check_type": "ai_content_filter_if_ai_generated",
+      "fix": "Worker 側で safety filter、user 側で report button"
+    },
+    {
+      "id": "UGC-001",
+      "category": "ugc_moderation",
+      "guideline": "1.2",
+      "severity": "critical",
+      "title": "UGC モデレーション UI (UGC あれば必須)",
+      "description": "user 投稿コンテンツがある app は、block / 通報 / EULA / コンテンツモデレーションが必須。",
+      "check_type": "ugc_moderation_present_if_ugc",
+      "fix": "block / 通報 button + コンテンツモデレーション pipeline"
+    },
+    {
+      "id": "SUB-001",
+      "category": "subscription",
+      "guideline": "3.1.2(a)",
+      "severity": "critical",
+      "title": "Subscription 価格・更新条件明示",
+      "description": "サブスク app は description / paywall 画面 / 続行前 disclosure で価格 / 期間 / 自動更新 / キャンセル方法を明示する必要がある。",
+      "check_type": "subscription_disclosure_complete",
+      "phrase_groups": {
+        "price_period": ["per week", "per year", "per month", "/ week", "/ year", "/ month", "/週", "/年", "/月", "weekly", "yearly", "monthly"],
+        "auto_renewal": ["auto-renew", "automatically renew", "automatic renewal", "auto renewal", "自動更新", "自動課金"],
+        "cancel": ["cancel", "cancellation", "キャンセル", "解約"]
+      },
+      "fix": "Paywall UI / description / metadata 全部に: 価格 / 期間 / 自動更新の明示 / キャンセル方法 / 利用規約 + プライバシーポリシー link"
+    },
+    {
+      "id": "SUB-002",
+      "category": "subscription",
+      "guideline": "3.1.2(a)",
+      "severity": "critical",
+      "title": "Subscription 無料トライアル条件明示",
+      "description": "無料トライアルあるなら、条件 (期間 / 自動課金 / キャンセル方法) を paywall で明示する。",
+      "check_type": "trial_disclosure_if_trial",
+      "fix": "Paywall に '7日間無料、その後 ¥XXX/月、いつでもキャンセル可' 等を明示"
+    },
+    {
+      "id": "SUB-003",
+      "category": "subscription",
+      "guideline": "3.1.2(a)",
+      "severity": "warning",
+      "title": "Settings → Subscriptions link",
+      "description": "settings 画面に Apple のサブスク管理画面 (https://apps.apple.com/account/subscriptions) への link 推奨。",
+      "check_type": "manage_subscription_link_present",
+      "fix": "Settings tab に 'Manage Subscription' link を追加"
+    },
+    {
+      "id": "IAP-001",
+      "category": "iap",
+      "guideline": "3.1.1",
+      "severity": "critical",
+      "title": "外部決済リンク禁止",
+      "description": "digital content / subscription を Apple IAP 以外で売る、または外部 web payment への link を提示するとリジェクト。",
+      "check_type": "no_external_payment_link",
+      "patterns_to_reject": ["stripe.com/checkout", "paypal.com", "bandcamp.com", "patreon.com", "buy now at"],
+      "fix": "全 digital purchase を Apple IAP に集約。description にも外部 link 入れない"
+    },
+    {
+      "id": "IAP-002",
+      "category": "iap",
+      "guideline": "3.1.1",
+      "severity": "warning",
+      "title": "価格表示の誤魔化し禁止",
+      "description": "「お得」「半額」等の誇大表現や、税抜表示と税込実価の乖離は 3.1.1 違反扱い。",
+      "check_type": "no_misleading_pricing",
+      "fix": "Apple が表示する税込価格と一致させる、誇大表現は控える"
+    },
+    {
+      "id": "HEALTH-001",
+      "category": "health_app",
+      "guideline": "1.4.1",
+      "severity": "critical",
+      "title": "Health app safety-critical 文言注意",
+      "description": "health / medical 系 app は「治療効果」「診断」「medical advice」を主張するとリジェクト。directional / educational に限定する。",
+      "check_type": "no_medical_claim",
+      "patterns_to_reject": ["治る", "治療", "diagnose", "medical advice", "cure", "doctor recommended"],
+      "fix": "description に 'not medical advice' 'not a substitute for a registered dietitian' 等の disclaimer 必須"
+    },
+    {
+      "id": "HEALTH-002",
+      "category": "health_app",
+      "guideline": "1.4.1",
+      "severity": "warning",
+      "title": "Health データの正確性主張に注意",
+      "description": "photo-based calorie / nutrition 算出は ±30% 程度の誤差がある。「正確」と謳うとリジェクト。",
+      "check_type": "no_accuracy_claim",
+      "patterns_to_reject": ["正確に", "精密", "exact", "100% accurate", "precise"],
+      "fix": "directional / approximate を強調"
+    },
+    {
+      "id": "META-001",
+      "category": "metadata",
+      "guideline": "4.0",
+      "severity": "critical",
+      "title": "Competitor disparagement 禁止",
+      "description": "他社 app 名 (Cal AI / MyFitnessPal / Yazio / Umax / MacroFactor 等) を description / promotional text / screenshot で言及するとリジェクト。",
+      "check_type": "no_competitor_mention",
+      "patterns_to_reject": ["Cal AI", "MyFitnessPal", "Yazio", "Umax", "UMax", "MacroFactor", "Lose It", "Noom", "Lifesum", "Cronometer"],
+      "fix": "description / metadata / landing page / screenshot で全削除"
+    },
+    {
+      "id": "META-002",
+      "category": "metadata",
+      "guideline": "2.3.1",
+      "severity": "critical",
+      "title": "Metadata accuracy (description ↔ 実装)",
+      "description": "description で謳う機能が実装されてない、または虚偽の主張はリジェクト。",
+      "check_type": "description_implementation_match",
+      "fix": "実装されてない機能を description に書かない (LLM 判断)"
+    },
+    {
+      "id": "META-003",
+      "category": "metadata",
+      "guideline": "2.3.7",
+      "severity": "warning",
+      "title": "App 名 30 char 以内",
+      "description": "App Store 表示の app 名は 30 文字以内。",
+      "check_type": "app_name_length_30",
+      "fix": "store/metadata.json の name を 30 文字以内に"
+    },
+    {
+      "id": "META-004",
+      "category": "metadata",
+      "guideline": "2.3.7",
+      "severity": "warning",
+      "title": "Subtitle 30 char 以内",
+      "description": "subtitle も 30 文字以内。",
+      "check_type": "subtitle_length_30",
+      "fix": "store/metadata.json の subtitle を 30 文字以内に"
+    },
+    {
+      "id": "META-005",
+      "category": "metadata",
+      "guideline": "2.3.7",
+      "severity": "warning",
+      "title": "Keywords 100 char 以内 (カンマ込み)",
+      "description": "keywords field は 100 文字以内 (カンマ含む)。",
+      "check_type": "keywords_length_100",
+      "fix": "短く絞る、商標含むキーワードは削除"
+    },
+    {
+      "id": "META-006",
+      "category": "metadata",
+      "guideline": "2.3.7",
+      "severity": "warning",
+      "title": "Promotional text 170 char 以内",
+      "description": "promotional text は 170 文字以内。",
+      "check_type": "promotional_text_length_170",
+      "fix": "短く絞る"
+    },
+    {
+      "id": "META-007",
+      "category": "metadata",
+      "guideline": "5.2.1",
+      "severity": "critical",
+      "title": "商標 / 著作権 violation",
+      "description": "他社商標 (Apple / Google / Facebook / 著名 brand) を許可なく app 名 / keywords / description で使うとリジェクト。",
+      "check_type": "no_trademark_violation",
+      "patterns_to_reject": ["Apple ", "iPhone ", "Google", "Facebook", "Instagram", "TikTok"],
+      "fix": "「for ~」「~ 対応」等の generic 文言に置換 (LLM 判断)"
+    },
+    {
+      "id": "BUNDLE-001",
+      "category": "bundle_id",
+      "guideline": "2.3",
+      "severity": "warning",
+      "title": "Bundle ID は逆 DNS 形式",
+      "description": "推奨形式: com.companyname.appname",
+      "check_type": "bundle_id_reverse_dns",
+      "fix": "app.json の ios.bundleIdentifier を逆 DNS 形式に"
+    },
+    {
+      "id": "BUNDLE-002",
+      "category": "bundle_id",
+      "guideline": "2.3",
+      "severity": "warning",
+      "title": "URL scheme conflict 確認",
+      "description": "scheme が他 app と衝突する一般語 (e.g., 'app', 'home') はリスク。固有名詞推奨。",
+      "check_type": "url_scheme_unique",
+      "fix": "app.json の scheme を unique な値に"
+    },
+    {
+      "id": "TECH-001",
+      "category": "technical",
+      "guideline": "2.1",
+      "severity": "critical",
+      "title": "Privacy Policy URL 必須",
+      "description": "Privacy Policy URL は ASC 必須項目。HTTPS のみ。",
+      "check_type": "privacy_url_https_present",
+      "fix": "ASC に登録 + landing page に Privacy Policy ページ用意 (Cloudflare Pages 等)"
+    },
+    {
+      "id": "TECH-002",
+      "category": "technical",
+      "guideline": "2.1",
+      "severity": "warning",
+      "title": "Support URL 必須",
+      "description": "Support URL も ASC 必須。連絡先 (email / form) を持つページ。",
+      "check_type": "support_url_https_present",
+      "fix": "support page 用意、connection mailto: でも OK"
+    },
+    {
+      "id": "TECH-003",
+      "category": "technical",
+      "guideline": "2.5.6",
+      "severity": "warning",
+      "title": "ITSAppUsesNonExemptEncryption false 設定",
+      "description": "encryption export compliance を回避するため、HTTPS のみで standard encryption を使う場合は ITSAppUsesNonExemptEncryption: false を明示。",
+      "check_type": "info_plist_encryption_explicit",
+      "fix": "Info.plist に ITSAppUsesNonExemptEncryption: false 追加 (app.json: ios.infoPlist.ITSAppUsesNonExemptEncryption)"
+    },
+    {
+      "id": "TECH-004",
+      "category": "technical",
+      "guideline": "5.6",
+      "severity": "warning",
+      "title": "Developer Code of Conduct 準拠",
+      "description": "Bundle Display Name に絵文字 / 特殊記号は NG。",
+      "check_type": "no_emoji_in_display_name",
+      "fix": "ASCII + 一般的な文字のみに"
+    },
+    {
+      "id": "CONTENT-001",
+      "category": "content_rating",
+      "guideline": "1.3",
+      "severity": "warning",
+      "title": "Age rating 適切性",
+      "description": "AI 生成コンテンツ / UGC / web view / カメラ / location があるなら age rating 4+ は不適切。Apple の age rating questionnaire を正確に answer。",
+      "check_type": "age_rating_appropriate",
+      "fix": "ASC App Store Connect で age rating 質問に正確に answer"
+    },
+    {
+      "id": "DESIGN-001",
+      "category": "design",
+      "guideline": "4.0",
+      "severity": "critical",
+      "title": "Minimum content / functionality",
+      "description": "1 機能しかない app / web view の wrapper / template app はリジェクト。",
+      "check_type": "min_functionality_present",
+      "fix": "core feature 以外に value 提供する周辺機能を実装"
+    },
+    {
+      "id": "DESIGN-002",
+      "category": "design",
+      "guideline": "4.3",
+      "severity": "critical",
+      "title": "Spam (重複 app) 禁止",
+      "description": "他 app と機能 / デザイン / コンテンツが酷似してるとリジェクト。",
+      "check_type": "no_spam_duplicate",
+      "fix": "差別化 / 独自機能を明確に"
+    },
+    {
+      "id": "DESIGN-003",
+      "category": "design",
+      "guideline": "4.2.3",
+      "severity": "warning",
+      "title": "External link 過多注意",
+      "description": "app の主体が web view や external link 集だとリジェクト (4.2 minimum functionality)。",
+      "check_type": "not_link_collection",
+      "fix": "native UI で core feature 実装"
+    },
+    {
+      "id": "REVIEW-001",
+      "category": "review_assistance",
+      "guideline": "2.1",
+      "severity": "critical",
+      "title": "Demo account / review note 提供",
+      "description": "login 必要な app は ASC の review note に demo account credentials を書く。書かないと reject。",
+      "check_type": "demo_account_in_review_note_if_login",
+      "fix": "ASC App Information → App Review Information → User Name / Password / Notes に test account 情報"
+    },
+    {
+      "id": "REVIEW-002",
+      "category": "review_assistance",
+      "guideline": "2.1",
+      "severity": "warning",
+      "title": "Subscription review note",
+      "description": "subscription product の reviewNote field に「テスト方法」「IAP のサンドボックス挙動」「キャンセル方法」を書くと審査スムーズ。",
+      "check_type": "subscription_review_note_present",
+      "fix": "ASC subscription product PATCH で reviewNote に上記説明"
+    },
+    {
+      "id": "REVIEW-003",
+      "category": "review_assistance",
+      "guideline": "2.1",
+      "severity": "warning",
+      "title": "Subscription screenshot 添付",
+      "description": "subscription product にレビュースクリーンショット (paywall 画面) を添付すると審査スムーズ。",
+      "check_type": "subscription_screenshot_present",
+      "fix": "ASC subscription product に subscriptionAppStoreReviewScreenshot upload"
+    },
+    {
+      "id": "SAFETY-001",
+      "category": "safety",
+      "guideline": "1.2",
+      "severity": "critical",
+      "title": "Sensitive data 保存方針",
+      "description": "health / financial / 個人 sensitive data を server 保存する場合、暗号化 + 削除方針を description / privacy policy で明示。",
+      "check_type": "sensitive_data_disclosure",
+      "fix": "description に 'encrypted in transit, deleted after analysis' 等明示"
+    },
+    {
+      "id": "SAFETY-002",
+      "category": "safety",
+      "guideline": "1.2",
+      "severity": "warning",
+      "title": "Photo 等の収集データ training 不使用宣言",
+      "description": "user photo / data を model training に使わないなら明示すると安心感。",
+      "check_type": "training_usage_disclosed",
+      "fix": "'We never use your images to train models' 等明示"
+    },
+    {
+      "id": "LOC-001",
+      "category": "localization",
+      "guideline": "2.3.7",
+      "severity": "warning",
+      "title": "primaryLocale 設定確認",
+      "description": "primaryLocale (e.g., en-US, ja) を正しく設定。default は en-US。",
+      "check_type": "primary_locale_set",
+      "fix": "ASC App Information で primaryLocale 確認"
+    },
+    {
+      "id": "ICON-001",
+      "category": "icon",
+      "guideline": "2.3.7",
+      "severity": "critical",
+      "title": "App icon 1024x1024 RGB no-alpha PNG",
+      "description": "App icon は 1024x1024 PNG、alpha channel 無し、透明背景なし。",
+      "check_type": "icon_format_1024_rgb_noalpha",
+      "fix": "PIL で flatten → RGB 保存"
+    },
+    {
+      "id": "ICON-002",
+      "category": "icon",
+      "guideline": "4.0",
+      "severity": "warning",
+      "title": "App icon に絵文字 / 著作権侵害素材禁止",
+      "description": "Apple 標準絵文字 / 他社 logo / 著作権素材を icon に使うのは NG。",
+      "check_type": "icon_no_copyrighted_content",
+      "fix": "オリジナル design に変更"
+    },
+    {
+      "id": "SCREEN-001",
+      "category": "screenshot",
+      "guideline": "2.3.8",
+      "severity": "critical",
+      "title": "Screenshot 実装と整合",
+      "description": "screenshot に表示される画面が実装に存在しない / 別 app の screenshot 使い回しはリジェクト。",
+      "check_type": "screenshots_match_implementation",
+      "fix": "実機 (or simulator) で撮った正規 screenshot 使う"
+    },
+    {
+      "id": "SCREEN-002",
+      "category": "screenshot",
+      "guideline": "2.3.8",
+      "severity": "warning",
+      "title": "Screenshot サイズ正確",
+      "description": "iPhone 6.7\" / 6.5\" / 5.5\" 各サイズで適切な解像度 (1290x2796 等)。",
+      "check_type": "screenshots_correct_resolution",
+      "fix": "TestFlight 実機 screenshot 推奨、or design tool で正確サイズ"
+    },
+    {
+      "id": "SCREEN-003",
+      "category": "screenshot",
+      "guideline": "2.3.8",
+      "severity": "warning",
+      "title": "Screenshot に competitor 名 / 商標含めない",
+      "description": "screenshot 内の text / UI 要素にも competitor 名 / 商標 / 不適切表現禁止。",
+      "check_type": "screenshots_no_competitor_or_trademark",
+      "fix": "Mirrorbite なら 'Cal AI 比較' 等 OUT"
+    },
+    {
+      "id": "PERF-001",
+      "category": "performance",
+      "guideline": "2.1",
+      "severity": "warning",
+      "title": "Crash on launch 禁止",
+      "description": "launch 直後 crash はリジェクト。",
+      "check_type": "no_launch_crash",
+      "fix": "TestFlight で実機確認"
+    },
+    {
+      "id": "PERF-002",
+      "category": "performance",
+      "guideline": "2.1",
+      "severity": "warning",
+      "title": "Network failure ハンドリング",
+      "description": "offline / poor connectivity でも crash しない、エラー UI を表示する。",
+      "check_type": "network_error_handling",
+      "fix": "fetch error catch + user friendly error UI"
+    },
+    {
+      "id": "PERF-003",
+      "category": "performance",
+      "guideline": "2.1",
+      "severity": "warning",
+      "title": "Timeout 設定",
+      "description": "vision API 等の slow API は timeout (60s 等) を実装、無限 spinner を防ぐ。",
+      "check_type": "api_timeout_set",
+      "fix": "fetch に AbortController + setTimeout"
+    },
+    {
+      "id": "LOCAL-001",
+      "category": "localization_quality",
+      "guideline": "2.3.1",
+      "severity": "warning",
+      "title": "primaryLocale と description 言語整合",
+      "description": "primaryLocale=en-US なら description も英語。日本語混入はリジェクト risk。",
+      "check_type": "description_language_matches_primary_locale",
+      "fix": "store/metadata.json の description を primaryLocale 言語に合わせる"
+    },
+    {
+      "id": "OPSEC-001",
+      "category": "opsec",
+      "guideline": "internal",
+      "severity": "warning",
+      "title": "個人情報 (email / phone / address) を description に含めない",
+      "description": "support email 以外の個人 contact (developer 個人 email / phone / 住所) を description に書くと OPSEC リスク + reject も。",
+      "check_type": "no_personal_info_in_description",
+      "patterns_to_reject": ["fuji0083@gmail.com", "forvyrcompany@gmail.com"],
+      "fix": "公開用 email (hello@starving-effort.com 等) のみ"
+    },
+    {
+      "id": "OPSEC-002",
+      "category": "opsec",
+      "guideline": "internal",
+      "severity": "warning",
+      "title": "Workspace path / 内部 file path を description に含めない",
+      "description": "C:/workspace/ や 個人 PC path が description / screenshot に映ってないか。",
+      "check_type": "no_workspace_path",
+      "patterns_to_reject": ["C:/workspace", "C:\\workspace", "/Users/fujim"],
+      "fix": "全削除"
+    },
+    {
+      "id": "BRAND-001",
+      "category": "brand",
+      "guideline": "internal",
+      "severity": "warning",
+      "title": "Brand 分離 (個人紐付き asset 公開禁止)",
+      "description": "Booth / Kirei / forvyr 等の個人紐付き brand を AI-only app の public asset に含めない。",
+      "check_type": "no_personal_linked_brand_in_public",
+      "patterns_to_reject": ["Booth", "Kirei", "forvyr", "starving effort (note)"],
+      "fix": "starving-effort.com (AI-only) のみ使用"
+    }
+  ]
+}
