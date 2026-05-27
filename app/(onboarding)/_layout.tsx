@@ -10,8 +10,6 @@ export default function OnboardingLayout() {
       }}
     >
       <Stack.Screen name="privacy" />
-      <Stack.Screen name="a1-goal" />
-      <Stack.Screen name="a1-eatout" />
       <Stack.Screen name="a2-mystery" />
       <Stack.Screen name="a3-reveal" />
     </Stack>

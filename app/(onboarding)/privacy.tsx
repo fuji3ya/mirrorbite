@@ -18,8 +18,8 @@ export default function PrivacyScreen() {
   const onContinue = async () => {
     await markPrivacySeen();
     const state = await loadOnboardingState();
-    await saveOnboardingState({ ...state, step: 'a1_goal' });
-    router.push('/(onboarding)/a1-goal');
+    await saveOnboardingState({ ...state, step: 'a2_mystery' });
+    router.push('/(onboarding)/a2-mystery');
   };
 
   return (

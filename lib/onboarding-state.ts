@@ -1,16 +1,19 @@
 /**
  * Mirrorbite — Onboarding state machine
  *
- * 8 step (固定, 2026-05-27 a2_baseline 削除後):
- *   privacy → a1_goal → a1_eatout → a2_mystery → a3_processing
- *   → reveal_delivered → paywall → completed (camera home)
+ * 6 step (固定, 2026-05-28 a1_goal / a1_eatout 削除後):
+ *   privacy → a2_mystery → a3_processing → reveal_delivered → paywall → completed
  *
- * a2_baseline (Your last 3 meals) was removed 2026-05-27 — the captured
- * `baseline_meals` data was never consumed by the Worker, reveal, or any
- * downstream surface (pure visual padding). Removing the step shortens
- * onboarding from 4 to 3 user-interaction steps and cuts a drop-off point.
+ * REMOVED 2026-05-28: a1_goal, a1_eatout, a2_baseline — all three were "data
+ * captured but never consumed" pages. `goal_hint` was saved to AsyncStorage but
+ * processing.tsx never passed it to analyzeMeal (Worker always received the
+ * "balanced" default). `eat_out_frequency` and `baseline_meals` had no consumer
+ * at all. See feedback_data_captured_ne_data_consumed.md for the postmortem.
  *
- * spec: generated/research/mirrorbite/day2-buildup/onboarding-3act-spec.md
+ * Onboarding is now consent (privacy) + sample reveal (mystery → reveal). When
+ * personalization is ready to actually plumb through to the Worker, add the
+ * relevant question back AND wire the consumer in the SAME PR (verified by a
+ * test that asserts the request body carries the value).
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,37 +21,26 @@ import { StorageKeys } from './storage-keys';
 
 export type OnboardingStep =
   | 'privacy'
-  | 'a1_goal'
-  | 'a1_eatout'
   | 'a2_mystery'
   | 'a3_processing'
   | 'reveal_delivered'
   | 'paywall'
   | 'completed';
 
-export type GoalHint = 'balanced' | 'fiber_focus' | 'higher_protein' | 'lower_carb';
-export type EatOutFreq = 'rare' | 'weekly' | 'daily';
-
 export interface OnboardingState {
   step: OnboardingStep;
-  goal_hint: GoalHint | null;
-  eat_out_frequency: EatOutFreq | null;
   started_at: number;
   completed_at: number | null;
 }
 
 export const defaultOnboardingState = (): OnboardingState => ({
   step: 'privacy',
-  goal_hint: null,
-  eat_out_frequency: null,
   started_at: Date.now(),
   completed_at: null,
 });
 
 export const STEP_ORDER: OnboardingStep[] = [
   'privacy',
-  'a1_goal',
-  'a1_eatout',
   'a2_mystery',
   'a3_processing',
   'reveal_delivered',
@@ -64,9 +56,7 @@ export function nextStep(current: OnboardingStep): OnboardingStep {
 
 export function progressPercent(step: OnboardingStep): number {
   if (step === 'privacy') return 0;
-  if (step === 'a1_goal') return 33;
-  if (step === 'a1_eatout') return 66;
-  if (step === 'a2_mystery') return 95;
+  if (step === 'a2_mystery') return 50;
   return 100;
 }
 
