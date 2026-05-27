@@ -102,8 +102,18 @@ export async function clearHistory(): Promise<void> {
 /**
  * Apple Guideline 5.1.1(v) — provide an in-app data-deletion path.
  * Mirrorbite has no remote account, so this clears all on-device data:
- * history, last capture, real result cache, onboarding flags.
- * Subscription cancellation must still happen via Apple ID Settings.
+ * history, last capture, real result cache, onboarding flags, and the
+ * monthly free-reveal usage counter.
+ *
+ * Subscription cancellation must still happen via Apple ID Settings — we
+ * deliberately do NOT clear ENTITLEMENT_ACTIVE because it mirrors the Apple
+ * subscription state that the user must cancel separately.
+ *
+ * NOTE 2026-05-28: FREE_REVEALS_KEY was previously missing from this list
+ * (added today). Without it the in-app Delete-All-Data action left the free
+ * counter stuck at 0/3 even after a "wipe", which is the kind of partial
+ * deletion that App Review can flag as not honoring 5.1.1(v) — and which
+ * blocked manual testing of fresh-install flows.
  */
 export async function clearAllAppData(): Promise<void> {
   const keys = [
@@ -111,16 +121,12 @@ export async function clearAllAppData(): Promise<void> {
     StorageKeys.REVEAL_LAST,
     StorageKeys.ONBOARDING_STATE,
     StorageKeys.ONBOARDING_PRIVACY_SEEN,
-    StorageKeys.PAYWALL_DISMISSED_COUNT,
-    StorageKeys.USER_PROFILE,
-    StorageKeys.THEME_OVERRIDE,
     RESULTS_KEY,
+    FREE_REVEALS_KEY,
   ];
   // Use sequential removeItem instead of multiRemove (which isn't in the typed surface
   // of @react-native-async-storage/async-storage v2 default export).
   await Promise.all(keys.map((k) => AsyncStorage.removeItem(k)));
-  // NOTE: We deliberately do NOT clear ENTITLEMENT_ACTIVE — that mirrors the
-  // Apple subscription, which the user must cancel separately via Settings.
 }
 
 export async function setLastCapture(photoUri: string, sampleKey?: string): Promise<void> {
