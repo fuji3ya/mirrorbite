@@ -136,6 +136,35 @@ jobs:
           path: build.ipa
           retention-days: 7
 
+      - name: Pre-submission check (static rules, no LLM in CI)
+        if: ${{ inputs.auto_submit == true }}
+        run: |
+          # Pulled from workspace at build time. In OSS public repo we keep a
+          # self-contained copy so CI can run without the full workspace.
+          # The check matches what `npm run pre-check:fast` runs locally.
+          if [ -f ".claude/skills/pre-submission-check/check.py" ]; then
+            python3 ".claude/skills/pre-submission-check/check.py" . --no-llm --output pre-check-report.md
+            CRIT=$(grep -E "CRITICAL fail.*?\*\*([0-9]+)\*\*" pre-check-report.md | head -1 | sed -E 's/.*\*\*([0-9]+)\*\*.*/\1/')
+            CRIT=${CRIT:-0}
+            echo "CRITICAL count: $CRIT"
+            cat pre-check-report.md | head -50
+            if [ "$CRIT" -gt 0 ]; then
+              echo "::error::$CRIT CRITICAL pre-submission issues. Blocking auto-submit."
+              exit 1
+            fi
+          else
+            echo "::warning::pre-submission-check not found, skipping gate (workspace-only tool)"
+          fi
+
+      - name: Upload pre-check report artifact
+        if: ${{ inputs.auto_submit == true && always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-submission-check-report
+          path: pre-check-report.md
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Submit to App Store Connect
         if: ${{ inputs.auto_submit == true }}
         env:

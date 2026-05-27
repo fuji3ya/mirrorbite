@@ -66,3 +66,9 @@ store/icon-options/
 .vscode/
 .cursor/
 .windsurf/
+
+# Allow CI gate skill (pre-submission check)
+!.claude/
+!.claude/skills/
+!.claude/skills/pre-submission-check/
+!.claude/skills/pre-submission-check/**
