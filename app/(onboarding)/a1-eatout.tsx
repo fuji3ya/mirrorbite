@@ -25,24 +25,24 @@ export default function EatOutScreen() {
     if (pickTimerRef.current) return; // ignore re-tap during the 280ms transition
     setSelected(id);
     const s = await loadOnboardingState();
-    await saveOnboardingState({ ...s, step: 'a2_baseline', eat_out_frequency: id });
+    await saveOnboardingState({ ...s, step: 'a2_mystery', eat_out_frequency: id });
     pickTimerRef.current = setTimeout(() => {
       pickTimerRef.current = null;
-      router.push('/(onboarding)/a2-baseline');
+      router.push('/(onboarding)/a2-mystery');
     }, 280);
   };
 
   const onSkip = async () => {
     const s = await loadOnboardingState();
-    await saveOnboardingState({ ...s, step: 'a2_baseline', eat_out_frequency: s.eat_out_frequency ?? 'weekly' });
-    router.push('/(onboarding)/a2-baseline');
+    await saveOnboardingState({ ...s, step: 'a2_mystery', eat_out_frequency: s.eat_out_frequency ?? 'weekly' });
+    router.push('/(onboarding)/a2-mystery');
   };
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.progress}><View style={[styles.progressFill, { width: '50%' }]} /></View>
+      <View style={styles.progress}><View style={[styles.progressFill, { width: '66%' }]} /></View>
       <View style={styles.body}>
-        <Text style={styles.eyebrow}>Step 2 of 4</Text>
+        <Text style={styles.eyebrow}>Step 2 of 3</Text>
         <Text style={styles.title}>When do you{'\n'}usually eat out?</Text>
         <Text style={styles.sub}>We'll use this to time your nudges.</Text>
         <View style={styles.picks}>
