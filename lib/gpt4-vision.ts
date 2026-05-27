@@ -149,9 +149,20 @@ export class AnalysisError extends Error {
   }
 }
 
+/**
+ * Analyze a meal photo via the Cloudflare Worker vision proxy.
+ *
+ * NOTE 2026-05-28: `goalHint` was intentionally removed from the public
+ * surface after the a1-goal onboarding question was deleted (the saved value
+ * never reached this call site — classic "data captured ≠ data consumed" trap;
+ * see feedback_data_captured_ne_data_consumed.md). The Worker still accepts
+ * `goal_hint` and falls back to "balanced" when absent, so this client only
+ * sends the image + locale. When per-user goal personalization returns, add
+ * `goalHint` back to this signature AND wire a caller in the SAME PR, with a
+ * test that asserts the request body carries the value end-to-end.
+ */
 export async function analyzeMeal(opts: {
   imageDataURL?: string;
-  goalHint?: string;
   locale?: string;
   signal?: AbortSignal;
 }): Promise<RevealResult> {
@@ -180,7 +191,8 @@ export async function analyzeMeal(opts: {
       headers,
       body: JSON.stringify({
         image: opts.imageDataURL,
-        goal_hint: opts.goalHint ?? 'balanced',
+        // goal_hint intentionally omitted — Worker defaults to "balanced".
+        // See analyzeMeal jsdoc for the data-flow audit reasoning.
         locale: opts.locale ?? 'en',
       }),
       signal: opts.signal,
