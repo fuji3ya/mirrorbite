@@ -189,6 +189,32 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+      - name: Inject submit credentials into eas.json (OPSEC — redacted in repo)
+        if: ${{ inputs.auto_submit == true }}
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_ISSUER: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+        run: |
+          # eas.json submit.production.ios is committed with REDACTED
+          # appleId / ascApiKeyId / ascApiKeyIssuerId for OPSEC. eas submit
+          # reads them from eas.json, so inject the real values at submit time
+          # from secrets. ascApiKeyPath must match the .p8 the Restore step
+          # wrote (AuthKey_<keyId>.p8).
+          node -e '
+            const fs = require("fs");
+            const p = "eas.json";
+            const j = JSON.parse(fs.readFileSync(p, "utf8"));
+            const ios = ((j.submit||{}).production||{}).ios;
+            if (!ios) { console.error("submit.production.ios missing"); process.exit(1); }
+            ios.appleId = process.env.APPLE_ID;
+            ios.ascApiKeyId = process.env.ASC_KEY_ID;
+            ios.ascApiKeyIssuerId = process.env.ASC_ISSUER;
+            ios.ascApiKeyPath = "./.secrets/AuthKey_" + process.env.ASC_KEY_ID + ".p8";
+            fs.writeFileSync(p, JSON.stringify(j, null, 2));
+            console.log("Injected submit creds: appleId/ascApiKeyId/issuerId/keyPath SET");
+          '
+
       - name: Submit to App Store Connect
         if: ${{ inputs.auto_submit == true }}
         env:
