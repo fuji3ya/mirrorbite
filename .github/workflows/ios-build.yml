@@ -120,6 +120,30 @@ jobs:
           EXPO_PUBLIC_REVIEW_MODE=0
           EOF
 
+      - name: Inject EAS project link (kept out of the public repo for OPSEC)
+        env:
+          EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+          EXPO_OWNER: ${{ secrets.EXPO_OWNER }}
+        run: |
+          # app.json is committed WITHOUT expo.owner / extra.eas.projectId so the
+          # owner handle never appears in this public repo (OPSEC). But
+          # `eas build --local` with appVersionSource=remote needs the project
+          # link, so we inject it at build time from secrets. (Removing these
+          # without re-injecting is what broke the earlier build:
+          # "EAS project not configured".)
+          node -e '
+            const fs = require("fs");
+            const p = "app.json";
+            const j = JSON.parse(fs.readFileSync(p, "utf8"));
+            j.expo = j.expo || {};
+            j.expo.owner = process.env.EXPO_OWNER;
+            j.expo.extra = j.expo.extra || {};
+            j.expo.extra.eas = j.expo.extra.eas || {};
+            j.expo.extra.eas.projectId = process.env.EAS_PROJECT_ID;
+            fs.writeFileSync(p, JSON.stringify(j, null, 2));
+            console.log("Injected owner=" + j.expo.owner + " projectId=" + (j.expo.extra.eas.projectId ? "SET" : "MISSING"));
+          '
+
       - name: EAS build (local)
         run: |
           eas build \
@@ -176,3 +200,17 @@ jobs:
             --path build.ipa \
             --non-interactive \
             --profile production
+
+      # POST-PROCESSING (run from the workspace, NOT in CI):
+      #   eas submit only UPLOADS the binary. Apple then spends ~5-30 min
+      #   processing it, during which the build is not yet VALID — so the
+      #   build-to-version attach, internal-group attach, and price=Free steps
+      #   cannot run here (the build isn't selectable until processing ends).
+      #   This is exactly why those three steps were done manually 3x during
+      #   the Mirrorbite 1.0 ship. Once Apple finishes processing, run:
+      #
+      #     python apps/<app>/scripts/asc-finalize-app.py
+      #
+      #   It is idempotent and drives the version to "Submit button active":
+      #   latest VALID build -> version + internal group + price=Free + report.
+      #   See generated/research/handovers/2026-05-28-mirrorbite-ship-retrospective.md
