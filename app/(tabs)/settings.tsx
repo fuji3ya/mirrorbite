@@ -22,6 +22,7 @@ import { colors, radii, shadows, spacing } from '@/lib/theme';
 const PRIVACY_URL = 'https://mirrorbite.starving-effort.com/privacy';
 const TERMS_URL = 'https://mirrorbite.starving-effort.com/terms';
 const SUPPORT_URL = 'https://mirrorbite.starving-effort.com/support';
+const SOURCES_URL = 'https://mirrorbite.starving-effort.com/sources';
 const SUPPORT_EMAIL = 'hello@starving-effort.com';
 
 export default function SettingsScreen() {
@@ -118,6 +119,10 @@ export default function SettingsScreen() {
           </Pressable>
           <Pressable onPress={() => Linking.openURL(TERMS_URL)} style={styles.row} accessibilityRole="link" accessibilityLabel="Open Terms of Service">
             <Text style={styles.rowLabel}>Terms of Service</Text>
+            <Text style={styles.rowChevron}>↗</Text>
+          </Pressable>
+          <Pressable onPress={() => Linking.openURL(SOURCES_URL)} style={styles.row} accessibilityRole="link" accessibilityLabel="Open nutrition sources and citations">
+            <Text style={styles.rowLabel}>Nutrition sources</Text>
             <Text style={styles.rowChevron}>↗</Text>
           </Pressable>
           <Pressable onPress={() => Linking.openURL(SUPPORT_URL)} style={styles.row} accessibilityRole="link" accessibilityLabel="Open support page">

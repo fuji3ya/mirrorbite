@@ -1,7 +1,8 @@
 import { Image as ExpoImage } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CTAButton } from '@/components/CTAButton';
 import { RevealCard } from '@/components/RevealCard';
@@ -9,6 +10,12 @@ import { SAMPLE_KEYS, getSampleByKey, type RevealResult } from '@/lib/gpt4-visio
 import { isPrivacySeen } from '@/lib/onboarding-state';
 import { getLastCapture, loadResult } from '@/lib/reveal-state';
 import { colors, radii, shadows, spacing } from '@/lib/theme';
+
+const CONF_DOT: Record<string, string> = {
+  high: colors.green500,
+  medium: colors.amber500,
+  low: colors.ink300,
+};
 
 export default function RevealDelivered() {
   const { sample: rawKey = 'delivered_caesar', rid } = useLocalSearchParams<{ sample?: string; rid?: string }>();
@@ -44,16 +51,30 @@ export default function RevealDelivered() {
         >
           <Text style={styles.backIcon}>‹</Text>
         </Pressable>
-        <Text style={styles.title} accessibilityRole="header">Today's plate</Text>
+        <Text style={styles.title} accessibilityRole="header">{"Today's plate"}</Text>
       </View>
       <ScrollView contentContainerStyle={{ padding: spacing.s6, paddingTop: 0 }}>
         {thumbUri && (
-          <ExpoImage
-            source={{ uri: thumbUri }}
-            style={styles.thumb}
-            contentFit="cover"
-            accessibilityLabel="Your meal photo thumbnail"
-          />
+          <View style={styles.photo}>
+            <ExpoImage
+              source={{ uri: thumbUri }}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              accessibilityLabel={`Your meal photo: ${sample.identified_dish ?? 'meal'}`}
+            />
+            <LinearGradient
+              colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.62)']}
+              locations={[0.35, 1]}
+              style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.photoMeta}>
+              <Text style={styles.photoDish} numberOfLines={1}>{sample.identified_dish}</Text>
+              <View style={styles.confChip}>
+                <View style={[styles.confChipDot, { backgroundColor: CONF_DOT[sample.confidence] ?? colors.ink300 }]} />
+                <Text style={styles.confChipTxt}>{sample.confidence.toUpperCase()}</Text>
+              </View>
+            </View>
+          </View>
         )}
         {isSampleFallback && (
           <View style={styles.sampleBadge} accessibilityRole="text">
@@ -61,7 +82,7 @@ export default function RevealDelivered() {
             <Text style={styles.sampleBadgeBody}>Demo reveal — capture a meal photo to see your own analysis.</Text>
           </View>
         )}
-        <RevealCard sample={sample} />
+        <RevealCard sample={sample} showDishChip={!thumbUri} />
         <View style={styles.actions}>
           {sample.next_action_cta && (
             <Text style={styles.nextHint} accessibilityRole="text">
@@ -75,6 +96,14 @@ export default function RevealDelivered() {
             accessibilityLabel="Done, back to camera"
           />
           <Text style={styles.disclaimer}>Directional only. Not medical advice.</Text>
+          <Pressable
+            onPress={() => Linking.openURL('https://mirrorbite.starving-effort.com/sources')}
+            style={styles.sourcesLink}
+            accessibilityRole="link"
+            accessibilityLabel="View the nutrition sources behind this guidance"
+          >
+            <Text style={styles.sourcesLinkText}>Nutrition sources ↗</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -87,7 +116,47 @@ const styles = StyleSheet.create({
   back: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 22 },
   backIcon: { fontSize: 24, color: colors.teal500, marginTop: -3 },
   title: { flex: 1, textAlign: 'center', fontSize: 15, fontWeight: '600', color: colors.ink900, marginRight: 36 },
-  thumb: { width: 42, height: 42, borderRadius: radii.md, marginVertical: spacing.s2, ...shadows.card },
+  photo: {
+    height: 158,
+    borderRadius: radii.xl,
+    overflow: 'hidden',
+    marginTop: spacing.s2,
+    marginBottom: spacing.s5,
+    ...shadows.cardElevated,
+  },
+  photoMeta: {
+    position: 'absolute',
+    left: spacing.s4,
+    right: spacing.s4,
+    bottom: 13,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  photoDish: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 19,
+    fontWeight: '700',
+    letterSpacing: -0.4,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  confChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: radii.pill,
+    marginLeft: spacing.s3,
+  },
+  confChipDot: { width: 7, height: 7, borderRadius: 4 },
+  confChipTxt: { color: '#fff', fontSize: 11, fontWeight: '700', letterSpacing: 0.3 },
   sampleBadge: {
     backgroundColor: colors.amber50,
     borderRadius: radii.md,
@@ -130,4 +199,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   disclaimer: { textAlign: 'center', marginTop: spacing.s3, fontSize: 11, color: colors.ink400 },
+  sourcesLink: { alignSelf: 'center', paddingVertical: spacing.s2, marginTop: spacing.s1 },
+  sourcesLinkText: { fontSize: 12, color: colors.teal600, fontWeight: '600' },
 });
