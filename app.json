@@ -132,11 +132,7 @@
       "reactCompiler": false
     },
     "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "REDACTED"
-      }
-    },
-    "owner": "REDACTED"
+      "router": {}
+    }
   }
 }
