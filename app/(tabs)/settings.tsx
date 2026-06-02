@@ -10,7 +10,7 @@
  */
 
 import Constants from 'expo-constants';
-import { router } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -121,9 +121,9 @@ export default function SettingsScreen() {
             <Text style={styles.rowLabel}>Terms of Service</Text>
             <Text style={styles.rowChevron}>↗</Text>
           </Pressable>
-          <Pressable onPress={() => Linking.openURL(SOURCES_URL)} style={styles.row} accessibilityRole="link" accessibilityLabel="Open nutrition sources and citations">
-            <Text style={styles.rowLabel}>Nutrition sources</Text>
-            <Text style={styles.rowChevron}>↗</Text>
+          <Pressable onPress={() => router.push('/sources' as Href)} style={styles.row} accessibilityRole="link" accessibilityLabel="Open nutrition sources and citations">
+            <Text style={styles.rowLabel}>Nutrition sources &amp; citations</Text>
+            <Text style={styles.rowChevron}>›</Text>
           </Pressable>
           <Pressable onPress={() => Linking.openURL(SUPPORT_URL)} style={styles.row} accessibilityRole="link" accessibilityLabel="Open support page">
             <Text style={styles.rowLabel}>Support</Text>

@@ -38,6 +38,7 @@ export default function RootLayout() {
           name="paywall/index"
           options={{ presentation: 'modal', gestureEnabled: false }}
         />
+        <Stack.Screen name="sources" options={{ presentation: 'modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

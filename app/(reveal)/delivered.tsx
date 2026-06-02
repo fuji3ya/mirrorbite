@@ -1,8 +1,8 @@
 import { Image as ExpoImage } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Redirect, router, useLocalSearchParams } from 'expo-router';
+import { type Href, Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CTAButton } from '@/components/CTAButton';
 import { RevealCard } from '@/components/RevealCard';
@@ -97,12 +97,12 @@ export default function RevealDelivered() {
           />
           <Text style={styles.disclaimer}>Directional only. Not medical advice.</Text>
           <Pressable
-            onPress={() => Linking.openURL('https://mirrorbite.starving-effort.com/sources')}
+            onPress={() => router.push('/sources' as Href)}
             style={styles.sourcesLink}
             accessibilityRole="link"
-            accessibilityLabel="View the nutrition sources behind this guidance"
+            accessibilityLabel="View the nutrition sources and citations behind this guidance"
           >
-            <Text style={styles.sourcesLinkText}>Nutrition sources ↗</Text>
+            <Text style={styles.sourcesLinkText}>Nutrition sources &amp; citations →</Text>
           </Pressable>
         </View>
       </ScrollView>

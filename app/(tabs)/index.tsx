@@ -10,7 +10,7 @@
  */
 
 import { Image as ExpoImage } from 'expo-image';
-import { router, useFocusEffect } from 'expo-router';
+import { type Href, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -186,6 +186,14 @@ export default function HomeScreen() {
         <Text style={styles.footerDisclaimer}>
           Directional only. Mirrorbite is not medical advice.
         </Text>
+        <Pressable
+          onPress={() => router.push('/sources' as Href)}
+          accessibilityRole="link"
+          accessibilityLabel="View nutrition sources and citations"
+          hitSlop={8}
+        >
+          <Text style={styles.footerSourcesLink}>Nutrition sources &amp; citations →</Text>
+        </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -262,4 +270,5 @@ const styles = StyleSheet.create({
 
   // Footer
   footerDisclaimer: { fontSize: 11, color: colors.ink400, textAlign: 'center', lineHeight: 16, marginTop: spacing.s5 },
+  footerSourcesLink: { fontSize: 12, color: colors.teal600, textAlign: 'center', fontWeight: '600', marginTop: spacing.s2 },
 });
