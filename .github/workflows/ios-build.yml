@@ -124,6 +124,7 @@ jobs:
         env:
           EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
           EXPO_OWNER: ${{ secrets.EXPO_OWNER }}
+          VISION_URL: ${{ secrets.EXPO_PUBLIC_VISION_API_URL }}
         run: |
           # app.json is committed WITHOUT expo.owner / extra.eas.projectId so the
           # owner handle never appears in this public repo (OPSEC). But
@@ -131,6 +132,11 @@ jobs:
           # link, so we inject it at build time from secrets. (Removing these
           # without re-injecting is what broke the earlier build:
           # "EAS project not configured".)
+          #
+          # ALSO: eas.json's build.production.env.EXPO_PUBLIC_VISION_API_URL is
+          # committed REDACTED for OPSEC, and eas.json env OVERRIDES .env.local,
+          # so without re-injecting it the build bakes a non-existent worker host
+          # → "camera can't reach the server". Inject the real URL here too.
           node -e '
             const fs = require("fs");
             const p = "app.json";
@@ -142,6 +148,15 @@ jobs:
             j.expo.extra.eas.projectId = process.env.EAS_PROJECT_ID;
             fs.writeFileSync(p, JSON.stringify(j, null, 2));
             console.log("Injected owner=" + j.expo.owner + " projectId=" + (j.expo.extra.eas.projectId ? "SET" : "MISSING"));
+            // eas.json: replace REDACTED vision URL with the real one from secrets
+            const ep = "eas.json";
+            const e = JSON.parse(fs.readFileSync(ep, "utf8"));
+            for (const prof of ["production", "review-submission", "preview"]) {
+              const env = (((e.build||{})[prof]||{}).env);
+              if (env && env.EXPO_PUBLIC_VISION_API_URL) env.EXPO_PUBLIC_VISION_API_URL = process.env.VISION_URL;
+            }
+            fs.writeFileSync(ep, JSON.stringify(e, null, 2));
+            console.log("Injected eas.json VISION_API_URL =", process.env.VISION_URL ? "SET" : "MISSING");
           '
 
       - name: EAS build (local)
