@@ -121,5 +121,5 @@ export const axisBarColor = {
   low:     [colors.red500, colors.red600] as const,
 };
 
-export type Axis = 'protein' | 'carb_balance' | 'fiber';
+export type Axis = 'protein' | 'carb_balance' | 'fiber' | 'fat';
 export type AxisLevel = 'good' | 'caution' | 'low';

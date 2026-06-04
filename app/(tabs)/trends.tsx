@@ -34,6 +34,7 @@ const AXIS_LABELS: Record<Axis, string> = {
   protein: 'Protein',
   carb_balance: 'Carb balance',
   fiber: 'Fiber',
+  fat: 'Fat balance',
 };
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -45,7 +46,7 @@ function emptyAxisCounts(): AxisCounts {
 function emptyAgg(): Aggregated {
   return {
     total: 0, delivered: 0, withheld: 0, scores: [],
-    axes: { protein: emptyAxisCounts(), carb_balance: emptyAxisCounts(), fiber: emptyAxisCounts() },
+    axes: { protein: emptyAxisCounts(), carb_balance: emptyAxisCounts(), fiber: emptyAxisCounts(), fat: emptyAxisCounts() },
   };
 }
 
@@ -67,7 +68,7 @@ async function aggregateLastSevenDays(history: HistoryEntry[]): Promise<Aggregat
     if (!res) continue;
     if (res.score != null) agg.scores.push(res.score);
     if (res.axes) {
-      (['protein', 'carb_balance', 'fiber'] as Axis[]).forEach((axis) => {
+      (['protein', 'carb_balance', 'fiber', 'fat'] as Axis[]).forEach((axis) => {
         const lvl = res.axes?.[axis];
         if (lvl) agg.axes[axis][lvl]++;
       });
@@ -134,8 +135,8 @@ export default function TrendsScreen() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionLabel}>3 axes — frequency this week</Text>
-              {(['protein', 'carb_balance', 'fiber'] as Axis[]).map((axis) => {
+              <Text style={styles.sectionLabel}>4 axes — frequency this week</Text>
+              {(['protein', 'carb_balance', 'fiber', 'fat'] as Axis[]).map((axis) => {
                 const counts = agg.axes[axis];
                 const total = counts.good + counts.caution + counts.low;
                 return (

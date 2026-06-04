@@ -13,6 +13,7 @@ const AXIS_LABEL: Record<string, string> = {
   protein: 'Protein',
   carb_balance: 'Carb balance',
   fiber: 'Fiber',
+  fat: 'Fat balance',
 };
 
 const LEVEL_WIDTH: Record<AxisLevel, number> = {
@@ -36,6 +37,7 @@ export function RevealCard({ sample, animate = false }: { sample: RevealResult; 
   const scoreOpacity = useRef(new Animated.Value(animate ? 0 : 1)).current;
   const qmarkOpacity = useRef(new Animated.Value(animate ? 1 : 0)).current;
   const axisOpacities = useRef([
+    new Animated.Value(animate ? 0 : 1),
     new Animated.Value(animate ? 0 : 1),
     new Animated.Value(animate ? 0 : 1),
     new Animated.Value(animate ? 0 : 1),
@@ -123,10 +125,10 @@ export function RevealCard({ sample, animate = false }: { sample: RevealResult; 
       {/* Axes */}
       <View style={styles.axesSection}>
         <View style={styles.axesHeader}>
-          <Text style={styles.axesTitle}>Today's 3 axes</Text>
+          <Text style={styles.axesTitle}>Today's 4 axes</Text>
           <Text style={styles.axesEyebrow}>CATEGORICAL</Text>
         </View>
-        {(['protein', 'carb_balance', 'fiber'] as const).map((axis, idx) => {
+        {(['protein', 'carb_balance', 'fiber', 'fat'] as const).map((axis, idx) => {
           const lvl: AxisLevel = sample.axes?.[axis] ?? 'low';
           const w = LEVEL_WIDTH[lvl];
           const [barFrom, barTo] = axisBarColor[lvl];

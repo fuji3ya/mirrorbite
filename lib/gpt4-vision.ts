@@ -25,7 +25,9 @@ export interface RevealResult {
   withheld_reason: WithheldReason | null;
   score: number | null;             // 0-100
   score_caption: string | null;
-  axes: Record<Axis, AxisLevel> | null;
+  // fat is the 4th axis (v1.1). Optional so fallback Worker responses that
+  // omit it (and the app's `?? 'low'` rendering) stay type-safe.
+  axes: { protein: AxisLevel; carb_balance: AxisLevel; fiber: AxisLevel; fat?: AxisLevel } | null;
   strength_bullet: string | null;
   improvement_bullet: string | null;
   next_action_cta: string | null;
@@ -41,7 +43,7 @@ const SAMPLES: Record<string, RevealResult> = {
     withheld_reason: null,
     score: 72,
     score_caption: 'Directional fit to a balanced-nutrition goal.',
-    axes: { protein: 'good', carb_balance: 'good', fiber: 'caution' },
+    axes: { protein: 'good', carb_balance: 'good', fiber: 'caution', fat: 'caution' },
     strength_bullet: 'Lean protein from the chicken plus crisp leafy greens.',
     improvement_bullet: 'Swap to mixed greens (spinach or kale) or add chickpeas — broader fiber variety would lift your index.',
     next_action_cta: 'Try at dinner',
@@ -54,7 +56,7 @@ const SAMPLES: Record<string, RevealResult> = {
     withheld_reason: null,
     score: 54,
     score_caption: 'Directional — leans carb-heavy for a balanced goal.',
-    axes: { protein: 'caution', carb_balance: 'low', fiber: 'low' },
+    axes: { protein: 'caution', carb_balance: 'low', fiber: 'low', fat: 'low' },
     strength_bullet: 'Warm comfort meal with some egg protein.',
     improvement_bullet: 'Tomorrow lunch — a leafy side could meaningfully balance things out.',
     next_action_cta: 'Plan tomorrow',
@@ -67,7 +69,7 @@ const SAMPLES: Record<string, RevealResult> = {
     withheld_reason: null,
     score: 64,
     score_caption: "Directional — I'm less sure about this one.",
-    axes: { protein: 'caution', carb_balance: 'good', fiber: 'good' },
+    axes: { protein: 'caution', carb_balance: 'good', fiber: 'good', fat: 'good' },
     strength_bullet: 'Looks vegetable-forward, which leans well.',
     improvement_bullet: 'Tomorrow lunch: add a clearer protein source.',
     next_action_cta: 'Save for tomorrow',
