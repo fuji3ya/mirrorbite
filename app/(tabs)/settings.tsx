@@ -43,7 +43,13 @@ export default function SettingsScreen() {
 
   const onManage = () => Linking.openURL('https://apps.apple.com/account/subscriptions');
   const onRestore = async () => {
-    const ok = await restorePurchases();
+    let ok = false;
+    try {
+      ok = await restorePurchases();
+    } catch {
+      Alert.alert('Restore failed', 'We couldn’t reach the store. Check your connection and try again.');
+      return;
+    }
     Alert.alert(
       ok ? 'Purchases restored' : 'No active subscription found',
       ok

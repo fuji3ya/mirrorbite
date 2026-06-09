@@ -26,7 +26,9 @@ import {
   type HistoryEntry,
 } from '@/lib/reveal-state';
 
-const REVIEW_MODE = process.env.EXPO_PUBLIC_REVIEW_MODE === '1';
+// REVIEW_MODE bypass is honoured ONLY in development — a Release binary (TestFlight
+// or App Store) can NEVER ship with the paywall disabled, even if the env leaks in.
+const REVIEW_MODE = __DEV__ && process.env.EXPO_PUBLIC_REVIEW_MODE === '1';
 import { colors, radii, shadows, spacing } from '@/lib/theme';
 
 const PLACEHOLDER_COLORS = ['#94c69a', '#d9a76b', '#a591c8', colors.amber100];

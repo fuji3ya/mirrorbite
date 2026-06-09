@@ -9,6 +9,7 @@
  */
 
 import type { Axis, AxisLevel } from './theme';
+import { getAppUserId } from './purchases';
 
 export type Judgement = 'delivered' | 'withheld';
 export type Confidence = 'high' | 'medium' | 'low';
@@ -187,6 +188,10 @@ export async function analyzeMeal(opts: {
   try {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (clientSecret) headers['x-mb-client-secret'] = clientSecret;
+    // Identify the RC user so the Worker can validate entitlement + cap abuse
+    // server-side (the leaked client secret alone is no longer unlimited-free).
+    const appUserId = await getAppUserId();
+    if (appUserId) headers['x-mb-app-user-id'] = appUserId;
 
     const res = await fetch(url, {
       method: 'POST',

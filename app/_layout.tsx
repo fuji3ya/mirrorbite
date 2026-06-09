@@ -16,8 +16,10 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import 'react-native-reanimated';
+import { initPurchases } from '@/lib/purchases';
 
 export const unstable_settings = {
   // Tabs is the default route at "/"; onboarding gate fires inside (tabs)/_layout.
@@ -26,6 +28,14 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  // Configure RevenueCat at launch (not lazily on first paywall open) so a
+  // returning Pro user's entitlement is recognised immediately, AND the
+  // customer-info listener is registered to catch an Ask-to-Buy / deferred
+  // purchase that completes while no paywall is open.
+  useEffect(() => {
+    initPurchases().catch(() => {});
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

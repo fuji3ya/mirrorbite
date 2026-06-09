@@ -24,7 +24,9 @@ import { Platform } from 'react-native';
 import { isPrivacySeen } from '@/lib/onboarding-state';
 import { colors } from '@/lib/theme';
 
-const REVIEW_MODE = process.env.EXPO_PUBLIC_REVIEW_MODE === '1';
+// REVIEW_MODE bypass is honoured ONLY in development — a Release binary (TestFlight
+// or App Store) can NEVER ship with the paywall disabled, even if the env leaks in.
+const REVIEW_MODE = __DEV__ && process.env.EXPO_PUBLIC_REVIEW_MODE === '1';
 
 export default function TabLayout() {
   // null = still checking, true = onboarded, false = needs onboarding

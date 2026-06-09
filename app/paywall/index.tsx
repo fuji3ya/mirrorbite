@@ -44,7 +44,11 @@ export default function Paywall() {
   //   remaining = 0  → "You've used your 3 free reveals for this month."
   //   null (loading) → render default copy until we know.
   useEffect(() => {
-    getFreeRevealsRemaining().then(setFreeRemaining);
+    let alive = true;
+    getFreeRevealsRemaining().then((n) => alive && setFreeRemaining(n));
+    return () => {
+      alive = false;
+    };
   }, []);
 
   useEffect(() => {

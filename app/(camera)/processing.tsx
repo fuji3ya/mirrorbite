@@ -7,13 +7,14 @@
 
 import { Image as ExpoImage } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { analyzeMeal, AnalysisError, ConfigurationError, type RevealResult } from '@/lib/gpt4-vision';
 import { stripAndEncodeForUpload } from '@/lib/image-privacy';
 import { isPro } from '@/lib/purchases';
 import {
+  getFreeRevealsRemaining,
   getLastCapture,
   incrementFreeRevealCount,
   pushHistory,
@@ -21,7 +22,9 @@ import {
   setLastCapture,
 } from '@/lib/reveal-state';
 
-const REVIEW_MODE = process.env.EXPO_PUBLIC_REVIEW_MODE === '1';
+// REVIEW_MODE bypass is honoured ONLY in development — a Release binary (TestFlight
+// or App Store) can NEVER ship with the paywall disabled, even if the env leaks in.
+const REVIEW_MODE = __DEV__ && process.env.EXPO_PUBLIC_REVIEW_MODE === '1';
 import { colors, radii, shadows, spacing } from '@/lib/theme';
 
 function inferSampleKey(r: RevealResult): string {
@@ -41,11 +44,11 @@ export default function Processing() {
   const [error, setError] = useState<null | { title: string; body: string; retryable: boolean }>(null);
   const [progressStep, setProgressStep] = useState(0); // 0=scanning, 1=strengths, 2=hook
   const [longWait, setLongWait] = useState(false);
+  const running = useRef(false);
 
   const run = async () => {
-    setError(null);
-    const last = await getLastCapture();
-    if (last?.photoUri) setPhotoUri(last.photoUri);
+    if (running.current) return; // in-flight guard: retry can't overlap an unsettled run
+    running.current = true;
 
     // 60s hard timeout so the spinner never hangs forever if the Worker stalls.
     // Gemini path completes in ~5s, Claude escalation in ~25s — 60s is generous
@@ -55,6 +58,19 @@ export default function Processing() {
     const timeoutId = setTimeout(() => controller.abort(), 60_000);
 
     try {
+      setError(null);
+      const last = await getLastCapture();
+      if (last?.photoUri) setPhotoUri(last.photoUri);
+
+      // Entitlement gate AT THE PAID CALL. camera.tsx gates before navigating here,
+      // but this screen is independently reachable (deep link / stale re-entry), so
+      // the paid Worker analysis must be re-authorized here too: a non-Pro user who
+      // is out of free reveals is redirected to the paywall, never given a free run.
+      if (!REVIEW_MODE && !(await isPro()) && (await getFreeRevealsRemaining()) <= 0) {
+        router.replace('/paywall');
+        return;
+      }
+
       // The Worker expects a `data:image/jpeg;base64,...` data URL.
       // The captured photo is stored as a `file://` URI (from camera or library),
       // so we re-encode it to base64 right before POST. Without this the Worker's
@@ -129,6 +145,7 @@ export default function Processing() {
       }
     } finally {
       clearTimeout(timeoutId);
+      running.current = false;
     }
   };
 
