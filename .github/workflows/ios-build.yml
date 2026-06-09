@@ -113,6 +113,18 @@ jobs:
           RC_KEY: ${{ secrets.EXPO_PUBLIC_RC_API_KEY_IOS }}
           VISION_URL: ${{ secrets.EXPO_PUBLIC_VISION_API_URL }}
         run: |
+          set -euo pipefail
+          # Fail closed: never ship a dead-paywall / mock build. An empty RC key
+          # makes the paywall non-functional (mock would be free-pro if it weren't
+          # __DEV__-gated); an empty Vision URL breaks analysis. ADR-001 / apps/_shared/iap.
+          if [ -z "${RC_KEY:-}" ]; then
+            echo "::error::EXPO_PUBLIC_RC_API_KEY_IOS (secret) is empty — refusing to ship a dead paywall / mock build"
+            exit 1
+          fi
+          if [ -z "${VISION_URL:-}" ]; then
+            echo "::error::EXPO_PUBLIC_VISION_API_URL (secret) is empty — refusing to ship a build that can't analyze"
+            exit 1
+          fi
           cat > .env.local <<EOF
           EXPO_PUBLIC_MB_CLIENT_SECRET=${MB_SECRET}
           EXPO_PUBLIC_RC_API_KEY_IOS=${RC_KEY}
