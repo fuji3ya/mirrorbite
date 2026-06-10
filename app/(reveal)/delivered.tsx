@@ -9,6 +9,7 @@ import { RevealCard } from '@/components/RevealCard';
 import { SAMPLE_KEYS, getSampleByKey, type RevealResult } from '@/lib/gpt4-vision';
 import { isPrivacySeen } from '@/lib/onboarding-state';
 import { getLastCapture, loadResult } from '@/lib/reveal-state';
+import { recordValueMomentAndMaybeAskReview } from '@/lib/review-ask';
 import { colors, radii, shadows, spacing } from '@/lib/theme';
 
 const CONF_DOT: Record<string, string> = {
@@ -31,6 +32,14 @@ export default function RevealDelivered() {
     getLastCapture().then((c) => setThumbUri(c?.photoUri ?? null));
     if (rid) loadResult(rid).then(setRealResult);
   }, [rid]);
+
+  // Value moment: a REAL reveal arrived (sample fallbacks don't count) — record
+  // it, and from the second reveal on, ask for a rating after the card settles.
+  useEffect(() => {
+    if (!realResult) return;
+    const t = setTimeout(() => { void recordValueMomentAndMaybeAskReview(); }, 2000);
+    return () => clearTimeout(t);
+  }, [realResult]);
 
   // Prefer the real Worker response (stored under rid) over the sample fallback.
   const sample: RevealResult = realResult ?? fallbackSample;
